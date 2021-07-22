@@ -1,6 +1,8 @@
 import React from "react";
 
 import { Formik } from "formik";
+import Input from "components/elements/Input";
+import Button from "components/elements/Button";
 
 const Settings = () => {
   return (
@@ -22,9 +24,10 @@ const Settings = () => {
         }) => (
           <form onSubmit={handleSubmit}>
             <div>
-              <input
+              <Input
                 type="text"
                 name="email"
+                placeholder="Email"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.email}
@@ -32,16 +35,17 @@ const Settings = () => {
               {errors.email && touched.email && errors.email}
             </div>
             <div>
-              <input
+              <Input
                 type="text"
                 name="password"
+                placeholder="Password"
                 onChange={handleChange}
                 onBlur={handleBlur}
                 value={values.password}
               />
               {errors.password && touched.password && errors.password}
             </div>
-            <button type="submit">Submit</button>
+            <Button type="submit">Submit</Button>
           </form>
         )}
       </Formik>

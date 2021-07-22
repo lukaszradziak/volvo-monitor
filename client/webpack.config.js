@@ -5,11 +5,15 @@ module.exports = () => {
   return {
     resolve: {
       alias: {
-        components: path.resolve(__dirname, "src/components/"),
+        components: path.resolve(__dirname, "src/components"),
       },
     },
     module: {
       rules: [
+        {
+          test: /\.css$/,
+          use: ["style-loader", "css-loader", "postcss-loader"],
+        },
         {
           test: /\.js$/,
           exclude: /node_modules/,
