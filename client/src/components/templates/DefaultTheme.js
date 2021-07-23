@@ -6,7 +6,7 @@ import Footer from "components/blocks/Footer";
 
 const DefaultTheme = ({ title, children }) => {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-screen">
       <Header title={title} />
       <Main>{children}</Main>
       <Footer />
