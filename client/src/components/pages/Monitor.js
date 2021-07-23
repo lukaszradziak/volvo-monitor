@@ -2,12 +2,12 @@ import React from "react";
 
 import DefaultTheme from "components/templates/DefaultTheme";
 
-const Home = () => {
+const Monitor = () => {
   return (
-    <DefaultTheme title="Home">
-      <p>Home Page</p>
+    <DefaultTheme title="Monitor">
+      <p>Monitor Page</p>
     </DefaultTheme>
   );
 };
 
-export default Home;
+export default Monitor;

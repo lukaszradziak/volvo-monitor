@@ -2,12 +2,12 @@ import React from "react";
 
 import DefaultTheme from "components/templates/DefaultTheme";
 
-const Home = () => {
+const Parameters = () => {
   return (
-    <DefaultTheme title="Home">
-      <p>Home Page</p>
+    <DefaultTheme title="Parameters">
+      <p>Parameters Page</p>
     </DefaultTheme>
   );
 };
 
-export default Home;
+export default Parameters;
