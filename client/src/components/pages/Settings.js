@@ -6,18 +6,17 @@ import Select from "components/elements/Select";
 import Button from "components/elements/Button";
 import DefaultTheme from "components/templates/DefaultTheme";
 
-const intervalTimes = [1000, 500, 200, 100, 50];
+import { settingsStore, intervalTimes } from "components/store/settings";
 
 const Settings = () => {
+  const [data, setData] = settingsStore();
+
   return (
     <DefaultTheme title="Settings">
       <Formik
-        initialValues={{
-          backendUrl: "localhost",
-          refreshInterval: intervalTimes[0],
-        }}
+        initialValues={data}
         onSubmit={(values) => {
-          console.log(values);
+          setData(values);
         }}
       >
         {({
