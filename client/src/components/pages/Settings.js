@@ -3,11 +3,11 @@ import React from "react";
 import { Formik } from "formik";
 import Input from "components/elements/Input";
 import Button from "components/elements/Button";
+import DefaultTheme from "components/templates/DefaultTheme";
 
 const Settings = () => {
   return (
-    <>
-      <h1>Settings</h1>
+    <DefaultTheme title="Settings">
       <Formik
         initialValues={{ email: "", password: "" }}
         onSubmit={(values) => {
@@ -49,7 +49,7 @@ const Settings = () => {
           </form>
         )}
       </Formik>
-    </>
+    </DefaultTheme>
   );
 };
 

@@ -2,11 +2,12 @@ import React from "react";
 
 const Input = (props) => {
   return (
-    <input
-      type="text"
-      className="px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm border-0 shadow outline-none focus:outline-none focus:ring w-full mb-5"
-      {...props}
-    />
+    <>
+      <input
+        className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-4 mb-4"
+        {...props}
+      />
+    </>
   );
 };
 
