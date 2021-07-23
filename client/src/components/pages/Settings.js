@@ -6,11 +6,16 @@ import Select from "components/elements/Select";
 import Button from "components/elements/Button";
 import DefaultTheme from "components/templates/DefaultTheme";
 
+const intervalTimes = [1000, 500, 200, 100, 50];
+
 const Settings = () => {
   return (
     <DefaultTheme title="Settings">
       <Formik
-        initialValues={{ email: "", password: "", test: "" }}
+        initialValues={{
+          backendUrl: "localhost",
+          refreshInterval: intervalTimes[0],
+        }}
         onSubmit={(values) => {
           console.log(values);
         }}
@@ -25,42 +30,36 @@ const Settings = () => {
         }) => (
           <form onSubmit={handleSubmit}>
             <div>
+              <label>Backend URL</label>
               <Input
                 type="text"
-                name="email"
-                placeholder="Email"
+                name="backendUrl"
+                placeholder="Backend URL"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={values.email}
+                value={values.backendUrl}
               />
-              {errors.email && touched.email && errors.email}
+              {errors.backendUrl && touched.backendUrl && errors.backendUrl}
             </div>
             <div>
-              <Input
-                type="text"
-                name="password"
-                placeholder="Password"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.password}
-              />
-              {errors.password && touched.password && errors.password}
-            </div>
-            <div>
+              <label>Refresh Interval</label>
               <Select
-                name="test"
-                placeholder="Test"
+                name="refreshInterval"
                 onChange={handleChange}
                 onBlur={handleBlur}
-                value={values.test}
+                value={values.refreshInterval}
               >
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
+                {intervalTimes.map((time, key) => (
+                  <option key={key} value={time}>
+                    {time} ms
+                  </option>
+                ))}
               </Select>
-              {errors.test && touched.test && errors.test}
+              {errors.refreshInterval &&
+                touched.refreshInterval &&
+                errors.refreshInterval}
             </div>
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Save</Button>
           </form>
         )}
       </Formik>
