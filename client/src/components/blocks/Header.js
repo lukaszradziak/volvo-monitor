@@ -1,23 +1,25 @@
 import React from "react";
 import { Disclosure } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
+import { NavLink } from "react-router-dom";
 
 const navigation = [
   {
     title: "Home",
     href: "/",
+    exact: true,
   },
   {
     title: "Monitor",
-    href: "#monitor",
+    href: "/monitor",
   },
   {
     title: "Parameters",
-    href: "#parameters",
+    href: "/parameters",
   },
   {
     title: "Settings",
-    href: "#settings",
+    href: "/settings",
   },
 ];
 
@@ -39,25 +41,17 @@ export default function Header({ title }) {
                   </div>
                   <div className="hidden md:block">
                     <div className="ml-10 flex items-baseline space-x-4">
-                      {navigation.map((item, itemIdx) =>
-                        itemIdx === 0 ? (
-                          <a
-                            key={itemIdx}
-                            href={item.href}
-                            className="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium"
-                          >
-                            {item.title}
-                          </a>
-                        ) : (
-                          <a
-                            key={itemIdx}
-                            href={item.href}
-                            className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                          >
-                            {item.title}
-                          </a>
-                        )
-                      )}
+                      {navigation.map((item, itemIdx) => (
+                        <NavLink
+                          key={itemIdx}
+                          to={item.href}
+                          exact={item.exact ? true : false}
+                          className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
+                          activeClassName="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium"
+                        >
+                          {item.title}
+                        </NavLink>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -76,25 +70,17 @@ export default function Header({ title }) {
 
             <Disclosure.Panel className="md:hidden">
               <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                {navigation.map((item, itemIdx) =>
-                  itemIdx === 0 ? (
-                    <a
-                      key={itemIdx}
-                      href={item.href}
-                      className="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium"
-                    >
-                      {item.title}
-                    </a>
-                  ) : (
-                    <a
-                      key={itemIdx}
-                      href={item.href}
-                      className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-                    >
-                      {item.title}
-                    </a>
-                  )
-                )}
+                {navigation.map((item, itemIdx) => (
+                  <NavLink
+                    key={itemIdx}
+                    to={item.href}
+                    exact={item.exact ? true : false}
+                    activeClassName="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium"
+                    className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                  >
+                    {item.title}
+                  </NavLink>
+                ))}
               </div>
             </Disclosure.Panel>
           </>

@@ -1,11 +1,12 @@
 import React from "react";
 
+import DefaultTheme from "components/templates/DefaultTheme";
+
 const Home = () => {
   return (
-    <>
-      <h1>Home</h1>
+    <DefaultTheme>
       <p>Home Page</p>
-    </>
+    </DefaultTheme>
   );
 };
 
