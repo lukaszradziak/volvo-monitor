@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const navigation = [
   { name: "Home", href: "/" },
@@ -7,46 +7,87 @@ const navigation = [
   { name: "Settings", href: "/settings" },
 ];
 
+import { Disclosure } from "@headlessui/react";
+import { MenuIcon, XIcon } from "@heroicons/react/outline";
+
 const Header = () => {
   return (
-    <header className="bg-indigo-600">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" aria-label="Top">
-        <div className="w-full py-6 flex items-center justify-between border-b border-indigo-500 lg:border-none">
-          <div className="flex items-center">
-            <a href="#">
-              <span className="sr-only">Workflow</span>
-              <img
-                className="h-10 w-auto"
-                src="https://tailwindui.com/img/logos/workflow-mark.svg?color=white"
-                alt=""
-              />
-            </a>
-            <div className="hidden ml-10 space-x-8 lg:block">
-              {navigation.map((link) => (
-                <Link
-                  to={link.href}
-                  key={link.name}
-                  className="text-base font-medium text-white hover:text-indigo-50"
-                >
-                  {link.name}
-                </Link>
-              ))}
+    <Disclosure as="nav" className="bg-primary-600">
+      {({ open, close }) => (
+        <>
+          <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+            <div className="relative flex items-center justify-between h-16">
+              <div className="flex items-center px-2 lg:px-0">
+                <div className="flex-shrink-0">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="white"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+                <div className="hidden lg:block lg:ml-6">
+                  <div className="flex space-x-4">
+                    {navigation.map((link) => (
+                      <NavLink
+                        to={link.href}
+                        key={link.name}
+                        className={({ isActive }) =>
+                          `${
+                            isActive
+                              ? `bg-primary-700 text-white`
+                              : `text-gray-300`
+                          }  hover:bg-primary-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium `
+                        }
+                      >
+                        {link.name}
+                      </NavLink>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="flex lg:hidden">
+                <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                  <span className="sr-only">Open main menu</span>
+                  {open ? (
+                    <XIcon className="block h-6 w-6" aria-hidden="true" />
+                  ) : (
+                    <MenuIcon className="block h-6 w-6" aria-hidden="true" />
+                  )}
+                </Disclosure.Button>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="py-4 flex flex-wrap justify-center space-x-6 lg:hidden">
-          {navigation.map((link) => (
-            <Link
-              to={link.href}
-              key={link.name}
-              className="text-base font-medium text-white hover:text-indigo-50"
-            >
-              {link.name}
-            </Link>
-          ))}
-        </div>
-      </nav>
-    </header>
+
+          <Disclosure.Panel className="lg:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {navigation.map((link) => (
+                <NavLink
+                  to={link.href}
+                  key={link.name}
+                  className={({ isActive }) =>
+                    `${
+                      isActive ? `bg-primary-700 text-white` : `text-gray-300`
+                    }  text-gray-300 hover:bg-primary-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium`
+                  }
+                  onClick={close}
+                >
+                  {link.name}
+                </NavLink>
+              ))}
+            </div>
+          </Disclosure.Panel>
+        </>
+      )}
+    </Disclosure>
   );
 };
 

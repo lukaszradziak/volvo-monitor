@@ -1,5 +1,5 @@
 import { render } from "react-dom";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 
 import App from "./components/App";
 
@@ -11,7 +11,7 @@ import Settings from "./components/pages/Settings";
 import "./style.css";
 
 render(
-  <BrowserRouter>
+  <HashRouter>
     <Routes>
       <Route path="/" element={<App />}>
         <Route index element={<Home />} />
@@ -20,6 +20,6 @@ render(
         <Route path="settings" element={<Settings />} />
       </Route>
     </Routes>
-  </BrowserRouter>,
+  </HashRouter>,
   document.getElementById("root")
 );
