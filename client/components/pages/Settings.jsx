@@ -3,21 +3,20 @@ import Button from "../elements/Button";
 import Input from "../elements/Input";
 import Label from "../elements/Label";
 import Select from "../elements/Select";
+import useSettings from "../hooks/useSettings";
 
 const Settings = () => {
+  const [settings, setSettings] = useSettings();
   const { control, handleSubmit } = useForm({
-    defaultValues: {
-      interval: "100",
-      canSpeed: "250",
-    },
+    defaultValues: settings,
   });
   const onSubmit = (data) => {
-    console.log(data);
+    setSettings(data);
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Label>Requests Interval</Label>
+      <Label required>Requests Interval</Label>
       <Controller
         name="interval"
         control={control}
@@ -25,7 +24,7 @@ const Settings = () => {
           <Input {...{ onChange, onBlur, value }} />
         )}
       />
-      <Label>CAN Speed</Label>
+      <Label required>CAN Speed</Label>
       <Controller
         name="canSpeed"
         control={control}
@@ -39,7 +38,9 @@ const Settings = () => {
           />
         )}
       />
-      <Button type="submit">Save</Button>
+      <Button type="submit" color="primary">
+        Save
+      </Button>
     </form>
   );
 };
