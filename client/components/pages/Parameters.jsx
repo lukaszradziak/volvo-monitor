@@ -1,9 +1,13 @@
+import { useState } from "react";
+
+import useParameters from "../hooks/useParameters";
+
 import Parameter from "../blocks/Parameter";
 import ParameterForm from "../blocks/ParameterForm";
 import Button from "../elements/Button";
-import useParameters from "../hooks/useParameters";
 import Modal from "../elements/Modal";
-import { useState } from "react";
+
+import sampleData from "../../data/sample.json";
 
 const Parameters = () => {
   const [parameters, setParameters] = useParameters();
@@ -38,13 +42,28 @@ const Parameters = () => {
     setParameters(parameters);
   };
 
+  const loadSample = () => {
+    const data = sampleData.map((row) => ({
+      address: row.address,
+      name: row.name,
+      description: row.description,
+      size: row.size,
+      definition: row.definition,
+      unit: row.unit,
+      min: row.min,
+      max: row.max,
+      active: false,
+    }));
+    setParameters(data);
+  };
+
   return (
     <div>
       <div className="mb-4">
         <Button color="primary" onClick={() => setOpenCreate(true)}>
           Create
         </Button>
-        <Button>Load Sample</Button>
+        <Button onClick={loadSample}>Load Sample</Button>
         <Button>Upload</Button>
         <Button>Download</Button>
       </div>

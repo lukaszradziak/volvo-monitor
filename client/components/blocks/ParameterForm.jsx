@@ -11,13 +11,15 @@ const ParameterForm = ({ onSubmit, editData = null }) => {
   const defaultValues = editData
     ? editData
     : {
-        id: ``,
+        address: ``,
         name: ``,
         description: ``,
-        address: ``,
+        size: `8`,
+        definition: ``,
+        unit: ``,
+        min: ``,
+        max: ``,
         active: false,
-        type: ``,
-        pattern: ``,
       };
 
   const {
@@ -40,9 +42,10 @@ const ParameterForm = ({ onSubmit, editData = null }) => {
       {Object.keys(errors).length ? (
         <Alert type="error" title="Fill required fields" />
       ) : null}
-      <Label required>ID</Label>
+
+      <Label required>Address</Label>
       <Controller
-        name="id"
+        name="address"
         control={control}
         rules={{ required: true }}
         render={({ field: { onChange, onBlur, value } }) => (
@@ -58,15 +61,6 @@ const ParameterForm = ({ onSubmit, editData = null }) => {
           <Input {...{ onChange, onBlur, value }} />
         )}
       />
-      <Label required>Address</Label>
-      <Controller
-        name="address"
-        control={control}
-        rules={{ required: true }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <Input {...{ onChange, onBlur, value }} />
-        )}
-      />
       <Label>Description</Label>
       <Controller
         name="description"
@@ -75,6 +69,65 @@ const ParameterForm = ({ onSubmit, editData = null }) => {
           <Textarea {...{ onChange, onBlur, value }} />
         )}
       />
+      <Label required>Size</Label>
+      <Controller
+        name="size"
+        control={control}
+        rules={{ required: true }}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Select
+            {...{ onChange, onBlur, value }}
+            options={[
+              { value: "8", label: "8" },
+              { value: "16", label: "16" },
+            ]}
+          />
+        )}
+      />
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <Label>Definition</Label>
+          <Controller
+            name="definition"
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input {...{ onChange, onBlur, value }} />
+            )}
+          />
+        </div>
+        <div>
+          <Label>Unit</Label>
+          <Controller
+            name="unit"
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input {...{ onChange, onBlur, value }} />
+            )}
+          />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <Label>Minimum</Label>
+          <Controller
+            name="min"
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input {...{ onChange, onBlur, value }} />
+            )}
+          />
+        </div>
+        <div>
+          <Label>Maximum</Label>
+          <Controller
+            name="max"
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input {...{ onChange, onBlur, value }} />
+            )}
+          />
+        </div>
+      </div>
       <Label>Active</Label>
       <Controller
         name="active"
@@ -83,29 +136,7 @@ const ParameterForm = ({ onSubmit, editData = null }) => {
           <Checkbox {...{ onChange, onBlur, value }} />
         )}
       />
-      <Label required>Type</Label>
-      <Controller
-        name="type"
-        control={control}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <Select
-            {...{ onChange, onBlur, value }}
-            options={[
-              { value: "1", label: "Multiple" },
-              { value: "2", label: "First byte" },
-              { value: "3", label: "Second byte" },
-            ]}
-          />
-        )}
-      />
-      <Label>Pattern</Label>
-      <Controller
-        name="pattern"
-        control={control}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <Input {...{ onChange, onBlur, value }} />
-        )}
-      />
+
       <Button type="submit">{editData ? `Update` : `Create`}</Button>
     </form>
   );
