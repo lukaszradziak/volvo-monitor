@@ -10,6 +10,16 @@ const Parameters = () => {
     setParameters([...parameters, data]);
   };
 
+  const toggleActive = (index) => {
+    parameters[index].active = !parameters[index].active;
+    setParameters(parameters);
+  };
+
+  const remove = (index) => {
+    parameters.splice(index, 1);
+    setParameters(parameters);
+  };
+
   return (
     <div>
       <div className="mb-4">
@@ -24,7 +34,12 @@ const Parameters = () => {
       {parameters ? (
         <div>
           {parameters.map((parameter, index) => (
-            <Parameter key={index} data={parameter} />
+            <Parameter
+              key={index}
+              data={parameter}
+              onToggleActive={() => toggleActive(index)}
+              onRemove={() => remove(index)}
+            />
           ))}
         </div>
       ) : null}
