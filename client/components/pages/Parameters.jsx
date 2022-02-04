@@ -8,6 +8,7 @@ import Button from "../elements/Button";
 import Modal from "../elements/Modal";
 
 import sampleData from "../../data/sample.json";
+import Paginator from "../blocks/Paginator";
 
 const Parameters = () => {
   const [parameters, setParameters] = useParameters();
@@ -57,6 +58,10 @@ const Parameters = () => {
     setParameters(data);
   };
 
+  const filter = (data) => {
+    return data;
+  };
+
   return (
     <div>
       <div className="mb-4">
@@ -68,21 +73,19 @@ const Parameters = () => {
         <Button>Download</Button>
       </div>
 
-      {parameters && parameters.length ? (
-        <div>
-          {parameters.map((parameter, index) => (
-            <Parameter
-              key={index}
-              data={parameter}
-              onToggleActive={() => toggleActive(index)}
-              onEdit={() => edit(index)}
-              onRemove={() => remove(index)}
-            />
-          ))}
-        </div>
-      ) : (
-        <p>Empty</p>
-      )}
+      <Paginator
+        scrollable={true}
+        items={filter(parameters)}
+        render={(item, index) => (
+          <Parameter
+            key={index}
+            data={item}
+            onToggleActive={() => toggleActive(index)}
+            onEdit={() => edit(index)}
+            onRemove={() => remove(index)}
+          />
+        )}
+      />
 
       <Modal open={openCreate} onClose={() => setOpenCreate(false)}>
         <ParameterForm onSubmit={submitCreate} />
