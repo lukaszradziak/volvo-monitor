@@ -2,12 +2,16 @@ import Parameter from "../blocks/Parameter";
 import ParameterForm from "../blocks/ParameterForm";
 import Button from "../elements/Button";
 import useParameters from "../hooks/useParameters";
+import Modal from "../elements/Modal";
+import { useState } from "react";
 
 const Parameters = () => {
   const [parameters, setParameters] = useParameters();
+  const [openCreate, setOpenCreate] = useState(false);
 
-  const handleSubmit = (data) => {
+  const submitCreate = (data) => {
     setParameters([...parameters, data]);
+    setOpenCreate(false);
   };
 
   const toggleActive = (index) => {
@@ -23,15 +27,15 @@ const Parameters = () => {
   return (
     <div>
       <div className="mb-4">
-        <Button color="primary">Create</Button>
+        <Button color="primary" onClick={() => setOpenCreate(true)}>
+          Create
+        </Button>
         <Button>Load Sample</Button>
         <Button>Upload CSV</Button>
         <Button>Download CSV</Button>
       </div>
 
-      <ParameterForm onSubmit={handleSubmit} />
-
-      {parameters ? (
+      {parameters && parameters.length ? (
         <div>
           {parameters.map((parameter, index) => (
             <Parameter
@@ -42,7 +46,13 @@ const Parameters = () => {
             />
           ))}
         </div>
-      ) : null}
+      ) : (
+        <p>Empty</p>
+      )}
+
+      <Modal open={openCreate} onClose={() => setOpenCreate(false)}>
+        <ParameterForm onSubmit={submitCreate} />
+      </Modal>
     </div>
   );
 };
