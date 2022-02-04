@@ -8,6 +8,8 @@ import { useState } from "react";
 const Parameters = () => {
   const [parameters, setParameters] = useParameters();
   const [openCreate, setOpenCreate] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
 
   const submitCreate = (data) => {
     setParameters([...parameters, data]);
@@ -17,6 +19,18 @@ const Parameters = () => {
   const toggleActive = (index) => {
     parameters[index].active = !parameters[index].active;
     setParameters(parameters);
+  };
+
+  const edit = (index) => {
+    setOpenEdit(true);
+    setEditIndex(index);
+  };
+
+  const submitEdit = (data) => {
+    parameters[editIndex] = data;
+    setParameters(parameters);
+    setOpenEdit(false);
+    setEditIndex(null);
   };
 
   const remove = (index) => {
@@ -31,8 +45,8 @@ const Parameters = () => {
           Create
         </Button>
         <Button>Load Sample</Button>
-        <Button>Upload CSV</Button>
-        <Button>Download CSV</Button>
+        <Button>Upload</Button>
+        <Button>Download</Button>
       </div>
 
       {parameters && parameters.length ? (
@@ -42,6 +56,7 @@ const Parameters = () => {
               key={index}
               data={parameter}
               onToggleActive={() => toggleActive(index)}
+              onEdit={() => edit(index)}
               onRemove={() => remove(index)}
             />
           ))}
@@ -52,6 +67,10 @@ const Parameters = () => {
 
       <Modal open={openCreate} onClose={() => setOpenCreate(false)}>
         <ParameterForm onSubmit={submitCreate} />
+      </Modal>
+
+      <Modal open={openEdit} onClose={() => setOpenEdit(false)}>
+        <ParameterForm onSubmit={submitEdit} editData={parameters[editIndex]} />
       </Modal>
     </div>
   );

@@ -14,7 +14,11 @@ const Parameter = ({
 }) => {
   return (
     <>
-      <div className="bg-white shadow overflow-hidden sm:rounded-lg mb-4">
+      <div
+        className={` mb-6 bg-white shadow overflow-hidden sm:rounded-lg border ${
+          data.active ? `border-2 border-primary-400` : ``
+        }`}
+      >
         <div className="px-4 py-4 sm:px-6 flex justify-between items-center">
           <div>
             <h3 className="text-lg leading-6 font-medium text-gray-900">

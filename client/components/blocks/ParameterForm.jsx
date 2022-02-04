@@ -7,22 +7,26 @@ import Label from "../elements/Label";
 import Select from "../elements/Select";
 import Textarea from "../elements/Textarea";
 
-const ParameterForm = ({ onSubmit }) => {
+const ParameterForm = ({ onSubmit, editData = null }) => {
+  const defaultValues = editData
+    ? editData
+    : {
+        id: ``,
+        name: ``,
+        description: ``,
+        address: ``,
+        active: false,
+        type: ``,
+        pattern: ``,
+      };
+
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      id: ``,
-      name: ``,
-      description: ``,
-      address: ``,
-      active: false,
-      type: ``,
-      pattern: ``,
-    },
+    defaultValues,
   });
 
   const submit = (data) => {
@@ -32,6 +36,7 @@ const ParameterForm = ({ onSubmit }) => {
 
   return (
     <form onSubmit={handleSubmit(submit)} className="mb-4">
+      {editData ? <h2>Edit</h2> : null}
       {Object.keys(errors).length ? (
         <Alert type="error" title="Fill required fields" />
       ) : null}
@@ -101,7 +106,7 @@ const ParameterForm = ({ onSubmit }) => {
           <Input {...{ onChange, onBlur, value }} />
         )}
       />
-      <Button type="submit">Create</Button>
+      <Button type="submit">{editData ? `Update` : `Create`}</Button>
     </form>
   );
 };
