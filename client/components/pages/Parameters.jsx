@@ -9,6 +9,9 @@ import Modal from "../elements/Modal";
 
 import sampleData from "../../data/sample.json";
 import Paginator from "../blocks/Paginator";
+import Label from "../elements/Label";
+import Input from "../elements/Input";
+import Header from "../elements/Header";
 
 const Parameters = () => {
   const [parameters, setParameters] = useParameters();
@@ -84,16 +87,9 @@ const Parameters = () => {
       </div>
 
       <div className="mb-4">
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Search
-        </label>
+        <Label>Search</Label>
         <div className="mt-1">
-          <input
-            type="text"
-            className="shadow-sm focus:ring-primary-500 focus:border-primary-500 block w-full sm:text-sm border-gray-300 rounded-md"
+          <Input
             placeholder="Search..."
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -101,7 +97,7 @@ const Parameters = () => {
       </div>
 
       <div className="mb-2">
-        <h2 className="block text-sm font-medium text-gray-700">Parameters</h2>
+        <Header>Parameters</Header>
       </div>
 
       <Paginator
