@@ -39,7 +39,9 @@ const Paginator = ({
       {visibleItems.map(({ item, index }) => (
         <div key={index}>{render(item, index)}</div>
       ))}
-      <Pagination pages={pages} onChange={(page) => changePage(page)} />
+      {pages ? (
+        <Pagination pages={pages} onChange={(page) => changePage(page)} />
+      ) : null}
     </div>
   );
 };
