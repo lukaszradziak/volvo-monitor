@@ -39,9 +39,9 @@ const Pagination = ({
   };
 
   return (
-    <div className="select-none">
+    <div className="flex justify-center">
       <nav
-        className="relative flex rounded-md shadow-sm -space-x-px"
+        className="select-none relative flex rounded-md -space-x-px"
         aria-label="Pagination"
       >
         <a
