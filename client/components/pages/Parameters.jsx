@@ -13,6 +13,7 @@ import Label from "../elements/Label";
 import Input from "../elements/Input";
 import Header from "../elements/Header";
 import Select from "../elements/Select";
+import Dropdown from "../elements/Dropdown";
 
 const Parameters = () => {
   const [parameters, setParameters] = useParameters();
@@ -104,13 +105,26 @@ const Parameters = () => {
 
   return (
     <div>
-      <div className="mb-4">
+      <div className="mb-4 flex justify-between">
         <Button color="primary" onClick={() => setOpenCreate(true)}>
           Create
         </Button>
-        <Button onClick={loadSample}>Load Sample</Button>
-        <Button>Upload</Button>
-        <Button>Download</Button>
+        <Dropdown
+          options={[
+            {
+              label: `Upload`,
+              onClick: () => console.log(`Upload`),
+            },
+            {
+              label: `Download`,
+              onClick: () => console.log(`Download`),
+            },
+            {
+              label: `Load Sample`,
+              onClick: loadSample,
+            },
+          ]}
+        />
       </div>
 
       <div className="mb-4">
