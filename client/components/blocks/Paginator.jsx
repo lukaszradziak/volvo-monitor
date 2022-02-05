@@ -36,6 +36,9 @@ const Paginator = ({
       {visibleItems.map((item, index) => (
         <div key={index}>{render(item, index)}</div>
       ))}
+      {!visibleItems.length ? (
+        <div className="text-gray-700 text-sm">Not found</div>
+      ) : null}
       {pages && pages > 1 ? (
         <Pagination
           page={page}

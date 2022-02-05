@@ -151,7 +151,7 @@ const Parameters = () => {
       </div>
 
       <div className="mb-2">
-        <Header>Parameters</Header>
+        <Header>Parameters ({filter(parameters).length})</Header>
       </div>
 
       <Paginator
