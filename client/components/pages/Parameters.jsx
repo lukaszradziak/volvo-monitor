@@ -73,11 +73,13 @@ const Parameters = () => {
     });
 
     if (search) {
+      const toSearch = search.toLowerCase();
+
       filterData = filterData.filter(({ item }) => {
         return (
-          String(item.name).toLowerCase().indexOf(search) !== -1 ||
-          String(item.description).toLowerCase().indexOf(search) !== -1 ||
-          String(item.address).toLowerCase().indexOf(search) !== -1
+          String(item.name).toLowerCase().indexOf(toSearch) !== -1 ||
+          String(item.description).toLowerCase().indexOf(toSearch) !== -1 ||
+          String(item.address).toLowerCase().indexOf(toSearch) !== -1
         );
       });
     }

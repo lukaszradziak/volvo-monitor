@@ -6,7 +6,12 @@ import {
   ChevronDoubleLeftIcon,
 } from "@heroicons/react/solid";
 
-const Pagination = ({ pages = 10, maxVisible = 3, onChange = () => {} }) => {
+const Pagination = ({
+  page = 1,
+  pages = 10,
+  maxVisible = 3,
+  onChange = () => {},
+}) => {
   const [listPages, setListPages] = useState([]);
   const [activePage, setActivePage] = useState(1);
 
@@ -20,6 +25,10 @@ const Pagination = ({ pages = 10, maxVisible = 3, onChange = () => {} }) => {
 
     setListPages(listPages);
   }, [pages, activePage]);
+
+  useEffect(() => {
+    setActivePage(page);
+  }, [page]);
 
   const changePage = (page) => {
     if (activePage === page) {

@@ -17,6 +17,10 @@ const Paginator = ({
     setVisibleItems(visibleItems);
   }, [items, page]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [items]);
+
   const changePage = (page) => {
     setPage(page);
 
@@ -33,7 +37,11 @@ const Paginator = ({
         <div key={index}>{render(item, index)}</div>
       ))}
       {pages && pages > 1 ? (
-        <Pagination pages={pages} onChange={(page) => changePage(page)} />
+        <Pagination
+          page={page}
+          pages={pages}
+          onChange={(page) => changePage(page)}
+        />
       ) : null}
     </div>
   );
