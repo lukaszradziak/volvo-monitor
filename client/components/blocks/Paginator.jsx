@@ -13,14 +13,7 @@ const Paginator = ({
   const pages = Math.ceil(items.length / perPage);
 
   useEffect(() => {
-    const visibleItems = items
-      .map((item, index) => {
-        return {
-          index,
-          item,
-        };
-      })
-      .slice((page - 1) * perPage, perPage * page);
+    const visibleItems = items.slice((page - 1) * perPage, perPage * page);
     setVisibleItems(visibleItems);
   }, [items, page]);
 
@@ -36,10 +29,10 @@ const Paginator = ({
 
   return (
     <div ref={scrollElement}>
-      {visibleItems.map(({ item, index }) => (
+      {visibleItems.map((item, index) => (
         <div key={index}>{render(item, index)}</div>
       ))}
-      {pages ? (
+      {pages && pages > 1 ? (
         <Pagination pages={pages} onChange={(page) => changePage(page)} />
       ) : null}
     </div>

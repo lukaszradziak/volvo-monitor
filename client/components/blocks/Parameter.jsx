@@ -1,10 +1,6 @@
 import Button from "../elements/Button";
-import {
-  MinusCircleIcon,
-  PencilAltIcon,
-  PlusCircleIcon,
-  TrashIcon,
-} from "@heroicons/react/outline";
+import { PencilAltIcon, StarIcon, TrashIcon } from "@heroicons/react/outline";
+import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
 
 const Parameter = ({
   data,
@@ -31,9 +27,9 @@ const Parameter = ({
               color={data.active ? `default` : `primary`}
             >
               {data.active ? (
-                <MinusCircleIcon className="h-3 w-3" />
+                <StarIcon className="h-4 w-4" />
               ) : (
-                <PlusCircleIcon className="h-4 w-4" />
+                <StarIconSolid className="h-4 w-4" />
               )}
             </Button>
             <Button onClick={onEdit}>

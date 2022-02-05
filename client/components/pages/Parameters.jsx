@@ -12,13 +12,18 @@ import Paginator from "../blocks/Paginator";
 import Label from "../elements/Label";
 import Input from "../elements/Input";
 import Header from "../elements/Header";
+import Select from "../elements/Select";
 
 const Parameters = () => {
   const [parameters, setParameters] = useParameters();
+
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+
   const [search, setSearch] = useState("");
+  const [searchUnit, setSearchUnit] = useState("");
+  const [searchActive, setSearchActive] = useState(null);
 
   const submitCreate = (data) => {
     setParameters([...parameters, data]);
@@ -63,8 +68,12 @@ const Parameters = () => {
   };
 
   const filter = (data) => {
+    let filterData = data.map((item, index) => {
+      return { item, index };
+    });
+
     if (search) {
-      data = data.filter((item) => {
+      filterData = filterData.filter(({ item }) => {
         return (
           String(item.name).toLowerCase().indexOf(search) !== -1 ||
           String(item.description).toLowerCase().indexOf(search) !== -1 ||
@@ -72,7 +81,23 @@ const Parameters = () => {
         );
       });
     }
-    return data;
+    if (searchUnit) {
+      filterData = filterData.filter(({ item }) => {
+        return item.unit === searchUnit;
+      });
+    }
+
+    if (searchActive) {
+      filterData = filterData.filter(({ item }) => {
+        if (searchActive === "1") {
+          return item.active;
+        } else {
+          return !item.active;
+        }
+      });
+    }
+
+    return filterData;
   };
 
   return (
@@ -96,6 +121,33 @@ const Parameters = () => {
         </div>
       </div>
 
+      <div className="grid grid-cols-2 gap-2 mb-4">
+        <div>
+          <Label>Active</Label>
+          <div className="mt-1">
+            <Select
+              options={[
+                { label: "All", value: "" },
+                { label: "Active", value: "1" },
+                { label: "Inactive", value: "0" },
+              ]}
+              onChange={(e) => setSearchActive(e.target.value)}
+            />
+          </div>
+        </div>
+        <div>
+          <Label>Unit</Label>
+          <div className="mt-1">
+            <Select
+              options={[...new Set(parameters.map((p) => p.unit))].map(
+                (name) => ({ label: name || "All", value: name })
+              )}
+              onChange={(e) => setSearchUnit(e.target.value)}
+            />
+          </div>
+        </div>
+      </div>
+
       <div className="mb-2">
         <Header>Parameters</Header>
       </div>
@@ -103,15 +155,19 @@ const Parameters = () => {
       <Paginator
         scrollable={true}
         items={filter(parameters)}
-        render={(item, index) => (
-          <Parameter
-            key={index}
-            data={item}
-            onToggleActive={() => toggleActive(index)}
-            onEdit={() => edit(index)}
-            onRemove={() => remove(index)}
-          />
-        )}
+        render={({ item, index }) => {
+          return (
+            <>
+              <Parameter
+                key={index}
+                data={item}
+                onToggleActive={() => toggleActive(index)}
+                onEdit={() => edit(index)}
+                onRemove={() => remove(index)}
+              />
+            </>
+          );
+        }}
       />
 
       <Modal open={openCreate} onClose={() => setOpenCreate(false)}>
