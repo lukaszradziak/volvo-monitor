@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import Pagination from "../elements/Pagtionation";
+import Pagination from "../elements/Pagination";
 
 const Paginator = ({
   perPage = 20,
