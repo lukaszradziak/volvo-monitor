@@ -60,8 +60,8 @@ const Parameters = () => {
       size: row.size,
       definition: row.definition,
       unit: row.unit,
-      min: row.min,
-      max: row.max,
+      min: String(parseFloat(row.min)),
+      max: String(parseFloat(row.max)),
       active: false,
     }));
     setParameters(data);

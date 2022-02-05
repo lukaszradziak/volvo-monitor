@@ -51,7 +51,7 @@ const Parameter = ({
           </span>
 
           <span className="mr-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-green-100 text-green-800">
-            {data.max ? `${data.min} - ${data.max}` : "-"}
+            {data.max ? `${data.min} / ${data.max}` : "-"}
           </span>
         </div>
       </div>
