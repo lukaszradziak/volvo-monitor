@@ -24,12 +24,12 @@ const Parameter = ({
           <div className="flex items-center">
             <Button
               onClick={onToggleActive}
-              color={data.active ? `default` : `primary`}
+              color={data.active ? `primary` : `default`}
             >
               {data.active ? (
-                <StarIcon className="h-4 w-4" />
-              ) : (
                 <StarIconSolid className="h-4 w-4" />
+              ) : (
+                <StarIcon className="h-4 w-4" />
               )}
             </Button>
             <Button onClick={onEdit}>

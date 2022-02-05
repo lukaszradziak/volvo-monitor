@@ -133,7 +133,7 @@ const ParameterForm = ({ onSubmit, editData = null }) => {
         name="active"
         control={control}
         render={({ field: { onChange, onBlur, value } }) => (
-          <Checkbox {...{ onChange, onBlur, value }} />
+          <Checkbox {...{ onChange, onBlur }} checked={value} />
         )}
       />
 
