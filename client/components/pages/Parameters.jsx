@@ -7,13 +7,13 @@ import ParameterForm from "../blocks/ParameterForm";
 import Button from "../elements/Button";
 import Modal from "../elements/Modal";
 
-import sampleData from "../../data/sample.json";
 import Paginator from "../blocks/Paginator";
 import Label from "../elements/Label";
 import Input from "../elements/Input";
 import Header from "../elements/Header";
 import Select from "../elements/Select";
 import Dropdown from "../elements/Dropdown";
+import ParameterSample from "../blocks/ParameterSample";
 
 const Parameters = () => {
   const [parameters, setParameters] = useParameters();
@@ -21,10 +21,16 @@ const Parameters = () => {
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+  const [openSample, setOpenSample] = useState(false);
 
   const [search, setSearch] = useState("");
   const [searchUnit, setSearchUnit] = useState("");
   const [searchActive, setSearchActive] = useState(null);
+
+  const loadSample = (data) => {
+    setParameters(data);
+    setOpenSample(false);
+  };
 
   const submitCreate = (data) => {
     setParameters([...parameters, data]);
@@ -51,21 +57,6 @@ const Parameters = () => {
   const remove = (index) => {
     parameters.splice(index, 1);
     setParameters(parameters);
-  };
-
-  const loadSample = () => {
-    const data = sampleData.map((row) => ({
-      address: row.address,
-      name: row.name,
-      description: row.description,
-      size: row.size,
-      definition: row.definition,
-      unit: row.unit,
-      min: String(parseFloat(row.min)),
-      max: String(parseFloat(row.max)),
-      active: false,
-    }));
-    setParameters(data);
   };
 
   const filter = (data) => {
@@ -121,7 +112,7 @@ const Parameters = () => {
             },
             {
               label: `Load Sample`,
-              onClick: loadSample,
+              onClick: () => setOpenSample(true),
             },
           ]}
         />
@@ -192,6 +183,10 @@ const Parameters = () => {
 
       <Modal open={openEdit} onClose={() => setOpenEdit(false)}>
         <ParameterForm onSubmit={submitEdit} editData={parameters[editIndex]} />
+      </Modal>
+
+      <Modal open={openSample} onClose={() => setOpenSample(false)}>
+        <ParameterSample onLoad={loadSample} />
       </Modal>
     </div>
   );

@@ -4,6 +4,7 @@ const useSettings = () =>
   useLocalStorage("settings", {
     interval: "100",
     canSpeed: "250",
+    canAddress: "7A",
   });
 
 export default useSettings;

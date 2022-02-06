@@ -1,10 +1,12 @@
 import { resolve } from "path";
 import { defineConfig } from "vite";
+
 import react from "@vitejs/plugin-react";
+import content from "@originjs/vite-plugin-content";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), content()],
   base: process.env.BASE_PATH ? process.env.BASE_PATH : "./",
   resolve: {
     alias: {

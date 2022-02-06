@@ -52,11 +52,10 @@ const ParameterForm = ({ onSubmit, editData = null }) => {
           <Input {...{ onChange, onBlur, value }} />
         )}
       />
-      <Label required>Name</Label>
+      <Label>Name</Label>
       <Controller
         name="name"
         control={control}
-        rules={{ required: true }}
         render={({ field: { onChange, onBlur, value } }) => (
           <Input {...{ onChange, onBlur, value }} />
         )}

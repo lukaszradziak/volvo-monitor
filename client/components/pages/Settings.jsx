@@ -16,7 +16,7 @@ const Settings = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Label required>Requests Interval</Label>
+      <Label required>Monitor Interval</Label>
       <Controller
         name="interval"
         control={control}
@@ -32,10 +32,19 @@ const Settings = () => {
           <Select
             {...{ onChange, onBlur, value }}
             options={[
+              { value: "125", label: "125 kbps" },
               { value: "250", label: "250 kbps" },
-              { value: "500", label: "500 kbps (MY05+)" },
+              { value: "500", label: "500 kbps" },
             ]}
           />
+        )}
+      />
+      <Label required>CAN Address</Label>
+      <Controller
+        name="canAddress"
+        control={control}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Input {...{ onChange, onBlur, value }} />
         )}
       />
       <Button type="submit" color="primary">
