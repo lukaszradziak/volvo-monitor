@@ -25,6 +25,7 @@ const ParameterSample = ({ onLoad }) => {
 
     onLoad(result);
   };
+
   return (
     <div className="flex flex-col">
       {Object.keys(files).map((path, index) => (

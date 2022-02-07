@@ -1,5 +1,5 @@
 const Header = (props) => (
-  <h2 className="block text-sm font-medium text-gray-700" {...props}>
+  <h2 className="block text-sm text-gray-700 font-bold" {...props}>
     {props.children}
   </h2>
 );

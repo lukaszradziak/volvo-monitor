@@ -1,12 +1,14 @@
 import Button from "../elements/Button";
 import { PencilAltIcon, StarIcon, TrashIcon } from "@heroicons/react/outline";
 import { StarIcon as StarIconSolid } from "@heroicons/react/solid";
+import Badge from "../elements/Badge";
 
 const Parameter = ({
   data,
   onToggleActive = () => {},
   onEdit = () => {},
   onRemove = () => {},
+  onTest = () => {},
 }) => {
   return (
     <>
@@ -43,16 +45,21 @@ const Parameter = ({
         <div className="border-t border-gray-200 px-4 py-5 sm:px-6">
           {data.description ? <p className="mb-4">{data.description}</p> : null}
 
-          <span className="mr-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-yellow-100 text-yellow-800">
-            {data.definition || `-`}
-          </span>
-          <span className="mr-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-blue-100 text-blue-800">
-            {data.unit || `-`}
-          </span>
+          <Badge>{data.definition || `-`}</Badge>
+          <Badge type="error">{data.unit || `-`}</Badge>
 
-          <span className="mr-2 inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-green-100 text-green-800">
+          <Badge type="success">{data.size}</Badge>
+
+          <Badge type="warning">
             {data.max ? `${data.min} / ${data.max}` : "-"}
-          </span>
+          </Badge>
+
+          <button
+            className="mr-2 inline-flex justify-center py-1 px-4 border border-transparent shadow-sm text-xs font-medium rounded-md bg-gray-100"
+            onClick={() => onTest(data)}
+          >
+            Test
+          </button>
         </div>
       </div>
     </>

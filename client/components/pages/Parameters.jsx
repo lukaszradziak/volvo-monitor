@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import useParameters from "../hooks/useParameters";
 
@@ -14,18 +14,64 @@ import Header from "../elements/Header";
 import Select from "../elements/Select";
 import Dropdown from "../elements/Dropdown";
 import ParameterSample from "../blocks/ParameterSample";
+import useSettings from "../hooks/useSettings";
+import ParameterTest from "../blocks/ParameterTest";
+
+const evaluateEval = (definition, variable) => {
+  return eval(`((x) => ${definition || "x"})(${variable})`);
+};
 
 const Parameters = () => {
+  const [settings] = useSettings();
+
   const [parameters, setParameters] = useParameters();
+  const [filterParameters, setFilterParameters] = useState([]);
 
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
   const [openSample, setOpenSample] = useState(false);
+  const [openTest, setOpenTest] = useState(false);
+  const [testData, setTestData] = useState({});
 
   const [search, setSearch] = useState("");
   const [searchUnit, setSearchUnit] = useState("");
   const [searchActive, setSearchActive] = useState(null);
+
+  useEffect(() => {
+    let filterParameters = parameters.map((item, index) => {
+      return { item, index };
+    });
+
+    if (search) {
+      const toSearch = search.toLowerCase();
+
+      filterParameters = filterParameters.filter(({ item }) => {
+        return (
+          String(item.name).toLowerCase().indexOf(toSearch) !== -1 ||
+          String(item.description).toLowerCase().indexOf(toSearch) !== -1 ||
+          String(item.address).toLowerCase().indexOf(toSearch) !== -1
+        );
+      });
+    }
+    if (searchUnit) {
+      filterParameters = filterParameters.filter(({ item }) => {
+        return item.unit === searchUnit;
+      });
+    }
+
+    if (searchActive) {
+      filterParameters = filterParameters.filter(({ item }) => {
+        if (searchActive === "1") {
+          return item.active;
+        } else {
+          return !item.active;
+        }
+      });
+    }
+
+    setFilterParameters(filterParameters);
+  }, [parameters, search, searchUnit, searchActive]);
 
   const loadSample = (data) => {
     setParameters(data);
@@ -59,39 +105,47 @@ const Parameters = () => {
     setParameters(parameters);
   };
 
-  const filter = (data) => {
-    let filterData = data.map((item, index) => {
-      return { item, index };
+  const test = async (data) => {
+    setTestData({});
+
+    const body = new FormData();
+    body.append("canSpeed", settings.canSpeed);
+    body.append("canAddress", settings.canAddress);
+    body.append("address", data.address);
+
+    const request = await fetch(`http://192.168.4.1/api/monitor/test`, {
+      method: "POST",
+      body,
     });
+    const text = await request.text();
+    const result = text
+      .split(",")
+      .filter((d) => d)
+      .map((d) => d.replace("0x", ""));
 
-    if (search) {
-      const toSearch = search.toLowerCase();
+    const parse = {
+      hex: "",
+      value: "",
+      calc: "",
+    };
 
-      filterData = filterData.filter(({ item }) => {
-        return (
-          String(item.name).toLowerCase().indexOf(toSearch) !== -1 ||
-          String(item.description).toLowerCase().indexOf(toSearch) !== -1 ||
-          String(item.address).toLowerCase().indexOf(toSearch) !== -1
-        );
-      });
-    }
-    if (searchUnit) {
-      filterData = filterData.filter(({ item }) => {
-        return item.unit === searchUnit;
-      });
-    }
-
-    if (searchActive) {
-      filterData = filterData.filter(({ item }) => {
-        if (searchActive === "1") {
-          return item.active;
-        } else {
-          return !item.active;
+    if (data.size) {
+      for (let i = 0; i < parseInt(data.size) / 8; i++) {
+        if (result[6 + i]) {
+          parse.hex += result[6 + i];
         }
-      });
+      }
     }
 
-    return filterData;
+    parse.value = parseInt(parse.hex, 16);
+    parse.calc = evaluateEval(data.definition, parse.value);
+
+    setOpenTest(true);
+    setTestData({
+      parameter: data,
+      data: result,
+      parse,
+    });
   };
 
   return (
@@ -156,12 +210,12 @@ const Parameters = () => {
       </div>
 
       <div className="mb-2">
-        <Header>Parameters ({filter(parameters).length})</Header>
+        <Header>Parameters ({filterParameters.length})</Header>
       </div>
 
       <Paginator
         scrollable={true}
-        items={filter(parameters)}
+        items={filterParameters}
         render={({ item, index }) => {
           return (
             <>
@@ -171,6 +225,7 @@ const Parameters = () => {
                 onToggleActive={() => toggleActive(index)}
                 onEdit={() => edit(index)}
                 onRemove={() => remove(index)}
+                onTest={() => test(item)}
               />
             </>
           );
@@ -187,6 +242,12 @@ const Parameters = () => {
 
       <Modal open={openSample} onClose={() => setOpenSample(false)}>
         <ParameterSample onLoad={loadSample} />
+      </Modal>
+
+      <Modal open={openTest} onClose={() => setOpenTest(false)}>
+        <Button onClick={() => test(testData.parameter)}>Reload</Button>
+
+        <ParameterTest data={testData} />
       </Modal>
     </div>
   );
