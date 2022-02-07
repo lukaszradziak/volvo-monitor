@@ -18,6 +18,7 @@ import useSettings from "../hooks/useSettings";
 import ParameterTest from "../blocks/ParameterTest";
 
 const evaluateEval = (definition, variable) => {
+  definition = definition.replaceAll("x&0b", "x & 0x");
   return eval(`((x) => ${definition || "x"})(${variable})`);
 };
 
