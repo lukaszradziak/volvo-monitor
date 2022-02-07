@@ -105,10 +105,9 @@ void setup() {
     String canResponse = "";
     char msgString[128];
 
-    for(int i = 0; i < 100; i++){
+    for(int i = 0; i <= 500; i++){
       if(xQueueReceive(CAN_cfg.rx_queue, &rx_frame, 3*portTICK_PERIOD_MS) == pdTRUE){
-        
-        if(rx_frame.data.u8[1] == canHex && rx_frame.data.u8[2] == 0xE6){
+        if(rx_frame.data.u8[1] == canHex && (rx_frame.data.u8[2] == 0xE6 || rx_frame.data.u8[2] == 0x7F)){
           sprintf(msgString, "0x%.8lX", (rx_frame.MsgID & 0x1FFFFFFF), rx_frame.FIR.B.DLC);
           canResponse = canResponse + msgString;
 

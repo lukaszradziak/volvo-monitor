@@ -128,6 +128,7 @@ const Parameters = () => {
       hex: "",
       value: "",
       calc: "",
+      success: false,
     };
 
     if (data.size) {
@@ -136,6 +137,10 @@ const Parameters = () => {
           parse.hex += result[6 + i];
         }
       }
+    }
+
+    if (result[3] === "E6") {
+      parse.success = true;
     }
 
     parse.value = parseInt(parse.hex, 16);

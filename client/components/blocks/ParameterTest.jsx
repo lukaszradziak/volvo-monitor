@@ -20,7 +20,12 @@ const ParameterTest = ({ data }) => {
   return (
     <div>
       {data.data?.length ? (
-        <div>
+        <div className="pt-2">
+          {data.parse.success ? (
+            <Alert title="Success" type="success" />
+          ) : (
+            <Alert title="Error response" type="error" />
+          )}
           <Header>
             {data.parameter.name} ({data.parameter.address})
           </Header>
@@ -46,7 +51,7 @@ const ParameterTest = ({ data }) => {
           </div>
         </div>
       ) : (
-        <Alert title="Error connection..." type="error" />
+        <Alert title="Connecting..." type="info" />
       )}
     </div>
   );
