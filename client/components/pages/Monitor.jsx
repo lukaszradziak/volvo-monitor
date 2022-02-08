@@ -1,37 +1,42 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import Button from "../elements/Button";
+import useParameters from "../hooks/useParameters";
+import useSettings from "../hooks/useSettings";
 
 const Monitor = () => {
-  const [data, setData] = useState([]);
+  const [settings] = useSettings();
+  const [parameters] = useParameters();
+  const [data, setData] = useState("");
+  const [status, setStatus] = useState("");
 
-  useEffect(() => {
-    let timer;
+  const start = async () => {
+    setStatus("Loading...");
 
-    const loop = async () => {
-      let request = await fetch(`http://192.168.4.1/api/monitor-data`);
-      let text = await request.text();
-      let lines = text
-        .trim()
-        .split("\n")
-        .filter((line) => line);
-
-      lines.forEach((line) => {
-        let values = line.split(";");
-        setData((data) => [...data, values]);
+    const body = new FormData();
+    parameters
+      .filter((parameter) => parameter.active)
+      .forEach((parameter, index) => {
+        body.append(index, parameter.address);
       });
 
-      timer = setTimeout(loop, 100);
-    };
-    loop();
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, []);
+    let request = await fetch(
+      `http://192.168.4.1/api/monitor/run?canSpeed=${settings.canSpeed}&canAddress=${settings.canAddress}&canInterval=${settings.canInterval}`,
+      {
+        method: "POST",
+        body,
+      }
+    );
+    let text = await request.text();
+    console.log(text);
+    setStatus("");
+    setData(text);
+  };
 
   return (
     <div>
-      <p>Monitor Page {data.length}</p>
-      {data.length ? <p>Data: {data[data.length - 1][0]}</p> : null}
+      <Button onClick={() => start()}>Start</Button>
+      <p>{status}</p>
+      <pre>{data}</pre>
     </div>
   );
 };

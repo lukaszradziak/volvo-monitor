@@ -47,6 +47,22 @@ const Settings = () => {
           <Input {...{ onChange, onBlur, value }} />
         )}
       />
+      <Label required>CAN Interval</Label>
+      <Controller
+        name="canInterval"
+        control={control}
+        render={({ field: { onChange, onBlur, value } }) => (
+          <Select
+            {...{ onChange, onBlur, value }}
+            options={[
+              { value: "01", label: "01 - once" },
+              { value: "02", label: "02 - slow" },
+              { value: "03", label: "03 - medium" },
+              { value: "04", label: "04 - fast" },
+            ]}
+          />
+        )}
+      />
       <Button type="submit" color="primary">
         Save
       </Button>
