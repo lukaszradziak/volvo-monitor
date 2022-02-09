@@ -13,7 +13,6 @@
 
 #define MAX_PARAMETERS 10
 
-CAN_device_t CAN_cfg;
 AsyncWebServer server(80);
 OBD obd;
 
@@ -40,60 +39,50 @@ void setup() {
   IPAddress IP = WiFi.softAPIP();
   printf("Address ip: %s\n", IP.toString().c_str());
 
-  server.on("/api/monitor-data", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/api/monitor/data", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/plain", monitorData);
     monitorData = "";
   });
 
-  server.on("/api/monitor/run", HTTP_POST, [](AsyncWebServerRequest *request){
+  server.on("/api/monitor/start", HTTP_POST, [](AsyncWebServerRequest *request){
     String canSpeed = request->arg("canSpeed");
-    String canAddress = request->arg("canAddress");
-    String canInterval = request->arg("canInterval");
+    byte canAddress = strtoul(request->arg("canAddress").c_str(), NULL, 16);
+    byte canInterval = strtoul(request->arg("canInterval").c_str(), NULL, 16);
 
-    printf("Monitor run: %s - %s - %s\n", canSpeed, canAddress, canInterval);
+    printf("Monitor start: speed: %s, address: %02X, interval: %02X\n", canSpeed.c_str(), canAddress, canInterval);
 
-    int canAddressHex = strtoul(canAddress.c_str(), NULL, 16);
-    int canIntervalHex = strtoul(canInterval.c_str(), NULL, 16);
-
-    int parameters[MAX_PARAMETERS][2];
-    for(int i=0; i < MAX_PARAMETERS; i++){
-      parameters[i][0] = 0;
-      parameters[i][1] = 0;
-    }
+    int parameters[20];
+    int parametersSize = 0;
 
     int params = request->params();
-    int index = 0;
     for(int i = 0; i < params; i++){
       AsyncWebParameter* p = request->getParam(i);
       if(p->isPost()){
-        int hex = strtoul(p->value().c_str(), NULL, 16);
-        parameters[index][0] = hex >> 8 & 0xFF;
-        parameters[index][1] = hex & 0xFF;
-        index++;
-        printf("[%s]: %s\n", p->name().c_str(), p->value().c_str());
+        parameters[parametersSize] = strtoul(p->value().c_str(), NULL, 16);
+        parametersSize++;
       }
     }
 
-    obd.canOpen(canSpeed);
-    String canResponse = obd.canMonitor(canAddressHex, canIntervalHex, parameters);
+    obd.canMonitorStart(canSpeed, canAddress, canInterval, parameters, parametersSize);
 
-    request->send(200, "text/plain", canResponse);
+    request->send(200, "text/plain", "ok");
+  });
+
+
+  server.on("/api/monitor/stop", HTTP_POST, [](AsyncWebServerRequest *request){
+    printf("Monitor stop\n");
+    obd.canMonitorStop();
+
+    request->send(200, "text/plain", "ok");
   });
 
   server.on("/api/monitor/test", HTTP_POST, [](AsyncWebServerRequest *request){
     String canSpeed = request->arg("canSpeed");
-    String canAddress = request->arg("canAddress");
-    String address = request->arg("address");
+    byte canAddress = strtoul(request->arg("canAddress").c_str(), NULL, 16);
+    int parameter = strtoul(request->arg("address").c_str(), NULL, 16);
 
-    printf("Monitor test: %s - %s - %s\n", canSpeed, canAddress, address);
-
-    int canHex = strtoul(canAddress.c_str(), NULL, 16);
-    int parameter = strtoul(address.c_str(), NULL, 16);
-    int parameter1 = parameter >> 8 & 0xFF;
-    int parameter2 = parameter & 0xFF;
-    
-    obd.canOpen(canSpeed);
-    String canResponse = obd.canTest(canHex, parameter1, parameter2);
+    printf("Monitor test: speed: %s, address: %02X, parameter: %04X\n", canSpeed, canAddress, parameter);
+    String canResponse = obd.canTest(canSpeed, canAddress, parameter);
 
     request->send(200, "text/plain", canResponse);
   });
@@ -110,5 +99,5 @@ void setup() {
 }
 
 void loop() {
-
+  monitorData += obd.canMonitorData();
 }

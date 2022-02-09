@@ -10,14 +10,22 @@ class OBD {
     gpio_num_t canTx;
     gpio_num_t canRx;
     gpio_num_t klineTx;
+    bool canMonitorActive = false;
+    int canMonitorAddress;
     
   public:
     void begin(gpio_num_t canTx, gpio_num_t canRx, gpio_num_t klineTx);
+
     void canOpen(String speed);
-    void canStop();
-    void canWrite(uint32_t id, uint8_t byte0, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7);
-    String canTest(int canHex, int parameter1, int parameter2);
-    String canMonitor(int canAddressHex, int canIntervalHex, int parameters[10][2]);
+    void canClose();
+    void canWrite(uint32_t id, byte byte0, byte byte1, byte byte2, byte byte3, byte byte4, byte byte5, byte byte6, byte byte7);
+    
+    String canTest(String canSpeed, byte canHex, int parameter);
+
+    void canMonitorStart(String canSpeed, byte canAddress, byte canInterval, int parameters[], int parametersSize);
+    void canMonitorStop();
+    String canMonitorData();
+
     void klineWrite();
 };
 
