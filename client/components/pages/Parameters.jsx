@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import useParameters from "../hooks/useParameters";
+import useParameters from "../../hooks/useParameters";
 
 import Parameter from "../blocks/Parameter";
 import ParameterForm from "../blocks/ParameterForm";
@@ -14,7 +14,7 @@ import Header from "../elements/Header";
 import Select from "../elements/Select";
 import Dropdown from "../elements/Dropdown";
 import ParameterSample from "../blocks/ParameterSample";
-import useSettings from "../hooks/useSettings";
+import useSettings from "../../hooks/useSettings";
 import ParameterTest from "../blocks/ParameterTest";
 
 const evaluateEval = (definition, variable) => {

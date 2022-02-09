@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useInterval } from "react-use";
 import Button from "../elements/Button";
-import useParameters from "../hooks/useParameters";
-import useSettings from "../hooks/useSettings";
+import useParameters from "../../hooks/useParameters";
+import useSettings from "../../hooks/useSettings";
+import { Api } from "../../utils/Api";
 
 const Monitor = () => {
   const [settings] = useSettings();
@@ -14,34 +15,29 @@ const Monitor = () => {
   const [blockInterval, setBlockInterval] = useState(false);
 
   const fetchStart = async () => {
-    const body = new FormData();
-    parameters
-      .filter((parameter) => parameter.active)
-      .forEach((parameter, index) => {
-        body.append(index, parameter.address);
-      });
+    const post = Object.fromEntries(
+      parameters
+        .filter((parameter) => parameter.active)
+        .map((parameter, index) => {
+          return [index, parameter.address];
+        })
+    );
 
-    await fetch(
-      `http://192.168.4.1/api/monitor/start?canSpeed=${settings.canSpeed}&canAddress=${settings.canAddress}&canInterval=${settings.canInterval}`,
-      {
-        method: "POST",
-        body,
-      }
+    await Api(
+      `monitor/start?canSpeed=${settings.canSpeed}&canAddress=${settings.canAddress}&canInterval=${settings.canInterval}`,
+      post
     );
   };
 
   const fetchStop = async () => {
-    await fetch(
-      `http://192.168.4.1/api/monitor/stop?canSpeed=${settings.canSpeed}&canAddress=${settings.canAddress}&canInterval=${settings.canInterval}`,
-      {
-        method: "POST",
-      }
+    await Api(
+      `monitor/stop?canSpeed=${settings.canSpeed}&canAddress=${settings.canAddress}&canInterval=${settings.canInterval}`,
+      {}
     );
   };
 
   const fetchData = async () => {
-    const request = await fetch(`http://192.168.4.1/api/monitor/data`);
-    return await request.text();
+    return await Api(`monitor/data`);
   };
 
   useInterval(

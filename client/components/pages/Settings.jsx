@@ -3,7 +3,7 @@ import Button from "../elements/Button";
 import Input from "../elements/Input";
 import Label from "../elements/Label";
 import Select from "../elements/Select";
-import useSettings from "../hooks/useSettings";
+import useSettings from "../../hooks/useSettings";
 
 const Settings = () => {
   const [settings, setSettings] = useSettings();
