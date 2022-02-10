@@ -32,20 +32,6 @@ void OBD::canOpen(int speed) {
   CAN_cfg.rx_pin_id = this->canRx;
   CAN_cfg.rx_queue = xQueueCreate(10,sizeof(CAN_frame_t));
 
-  // CAN_filter_t p_filter;
-  // p_filter.FM = Single_Mode;
-
-  // p_filter.ACR0 = 0x00;
-  // p_filter.ACR1 = 0x00;
-  // p_filter.ACR2 = 0x00;
-  // p_filter.ACR3 = 0x00;
-
-  // p_filter.AMR0 = 0x15;
-  // p_filter.AMR1 = 0xFF;
-  // p_filter.AMR2 = 0xFF;
-  // p_filter.AMR3 = 0xFF;
-  // ESP32Can.CANConfigFilter(&p_filter);
-
   ESP32Can.CANInit();
 }
 
@@ -136,8 +122,8 @@ String OBD::canData(){
 
   if(xQueueReceive(CAN_cfg.rx_queue, &rxFrame, 3*portTICK_PERIOD_MS) == pdTRUE){
     if((this->canMonitorAddress == -1 && this->canMonitorData == -1) || (rxFrame.data.u8[1] == this->canMonitorAddress && rxFrame.data.u8[2] == this->canMonitorData)){
-      result += String(millis());
-
+      sprintf(rxString, "%ld,%08X", millis(), (rxFrame.MsgID & 0x1FFFFFFF));
+      result += rxString;
       for(int i = 0; i < 8; i++){
         sprintf(rxString, ",%02X", rxFrame.data.u8[i]);
         result += rxString;

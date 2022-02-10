@@ -47,7 +47,7 @@ const Monitor = () => {
       .filter((d) => d)
       .forEach((line) => {
         const col = line.split(`,`);
-        result[col[4] + col[5]] = [col[0], col[6], col[7], col[8]];
+        result[col[5] + col[6]] = [col[0], col[7], col[8], col[9]];
       });
 
     setParameterValues((old) => {
