@@ -18,6 +18,8 @@ void OBD::begin(gpio_num_t canRx, gpio_num_t canTx, gpio_num_t klineTx) {
 void OBD::canOpen(int speed) {
   this->canClose();
 
+  printf("open %i\n", speed);
+
   if(speed == 125){
     CAN_cfg.speed = CAN_SPEED_125KBPS;
   } else if(speed == 250){
@@ -30,19 +32,19 @@ void OBD::canOpen(int speed) {
   CAN_cfg.rx_pin_id = this->canRx;
   CAN_cfg.rx_queue = xQueueCreate(10,sizeof(CAN_frame_t));
 
-  CAN_filter_t p_filter;
-  p_filter.FM = Single_Mode;
+  // CAN_filter_t p_filter;
+  // p_filter.FM = Single_Mode;
 
-  p_filter.ACR0 = 0x00;
-  p_filter.ACR1 = 0x00;
-  p_filter.ACR2 = 0x00;
-  p_filter.ACR3 = 0x00;
+  // p_filter.ACR0 = 0x00;
+  // p_filter.ACR1 = 0x00;
+  // p_filter.ACR2 = 0x00;
+  // p_filter.ACR3 = 0x00;
 
-  p_filter.AMR0 = 0x15;
-  p_filter.AMR1 = 0xFF;
-  p_filter.AMR2 = 0xFF;
-  p_filter.AMR3 = 0xFF;
-  ESP32Can.CANConfigFilter(&p_filter);
+  // p_filter.AMR0 = 0x15;
+  // p_filter.AMR1 = 0xFF;
+  // p_filter.AMR2 = 0xFF;
+  // p_filter.AMR3 = 0xFF;
+  // ESP32Can.CANConfigFilter(&p_filter);
 
   ESP32Can.CANInit();
 }
@@ -103,11 +105,9 @@ void OBD::canMonitorStart(int canSpeed, int canAddress, int canInterval, int par
 
   this->canMonitorActive = true;
   this->canMonitorAddress = canAddress;
+  this->canMonitorData = 0xE6;
 
   for(int i = 0; i < parametersSize; i++){
-    Serial.print("hex: ");
-    Serial.println(parameters[i], HEX);
-
     this->canWrite(0x0FFFFE, 0xCD, canAddress, 0xA6, parameters[i] >> 8 & 0xFF, parameters[i] & 0xFF, canInterval, 0x00, 0x00);
     delay(30UL);
   }
@@ -117,28 +117,42 @@ void OBD::canMonitorStop(){
   this->canWrite(0x0FFFFE, 0xCA, this->canMonitorAddress, 0xA0, 0x00, 0x00, 0x00, 0x00, 0x00);
   delay(100UL);
   this->canMonitorActive = false;
+  this->canMonitorAddress = -1;
+  this->canMonitorData = -1;
 }
 
-String OBD::canMonitorData(){
+void OBD::canSnifferStart(int canSpeed){
+  this->canOpen(canSpeed);
+  this->canSnifferActive = true;
+}
+
+void OBD::canSnifferStop(){
+  this->canSnifferActive = false;
+  this->canClose();
+}
+
+String OBD::canData(){
   String result = "";
 
-  if(this->canMonitorActive){
-    if(xQueueReceive(CAN_cfg.rx_queue, &rxFrame, 3*portTICK_PERIOD_MS) == pdTRUE){
-      if(rxFrame.data.u8[1] == this->canMonitorAddress && rxFrame.data.u8[2] == 0xE6){
-        result += String(millis());
+  if(xQueueReceive(CAN_cfg.rx_queue, &rxFrame, 3*portTICK_PERIOD_MS) == pdTRUE){
+    if((this->canMonitorAddress == -1 && this->canMonitorData == -1) || (rxFrame.data.u8[1] == this->canMonitorAddress && rxFrame.data.u8[2] == this->canMonitorData)){
+      result += String(millis());
 
-        for(int i = 0; i < 8; i++){
-          sprintf(rxString, ",%02X", rxFrame.data.u8[i]);
-          result += rxString;
-        }
-
-        Serial.println(result);
-        result += "\n";
+      for(int i = 0; i < 8; i++){
+        sprintf(rxString, ",%02X", rxFrame.data.u8[i]);
+        result += rxString;
       }
+
+      // Serial.println(result);
+      result += "\n";
     }
   }
 
   return result;
+}
+
+bool OBD::canAvailable(){
+  return this->canMonitorActive || this->canSnifferActive;
 }
 
 void OBD::klineWrite(){

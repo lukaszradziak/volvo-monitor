@@ -39,9 +39,24 @@ void setup() {
   IPAddress IP = WiFi.softAPIP();
   printf("Address ip: %s\n", IP.toString().c_str());
 
-  server.on("/api/monitor/data", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/api/data", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send(200, "text/plain", monitorData);
     monitorData = "";
+  });
+
+  server.on("/api/sniffer/start", HTTP_POST, [](AsyncWebServerRequest *request){
+    int canSpeed = request->arg("canSpeed").toInt();
+    printf("Sniffer start: speed: %i\n", canSpeed);
+    obd.canSnifferStart(canSpeed);
+
+    request->send(200, "text/plain", "ok");
+  });
+
+  server.on("/api/sniffer/stop", HTTP_POST, [](AsyncWebServerRequest *request){
+    printf("Sniffer stop\n");
+    obd.canSnifferStop();
+
+    request->send(200, "text/plain", "ok");
   });
 
   server.on("/api/monitor/start", HTTP_POST, [](AsyncWebServerRequest *request){
@@ -59,6 +74,7 @@ void setup() {
       AsyncWebParameter* p = request->getParam(i);
       if(p->isPost() && p->name().indexOf("param") != -1){
         parameters[parametersSize] = p->value().toInt();
+        printf("param: %02X\n", parameters[parametersSize]);
         parametersSize++;
       }
     }
@@ -99,5 +115,7 @@ void setup() {
 }
 
 void loop() {
-  monitorData += obd.canMonitorData();
+  if(obd.canAvailable()){
+    monitorData += obd.canData();
+  }
 }

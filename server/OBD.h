@@ -10,8 +10,12 @@ class OBD {
     gpio_num_t canTx;
     gpio_num_t canRx;
     gpio_num_t klineTx;
+
+    bool canSnifferActive = false;
     bool canMonitorActive = false;
-    int canMonitorAddress;
+
+    int canMonitorAddress = -1;
+    int canMonitorData = -1;
     
   public:
     void begin(gpio_num_t canTx, gpio_num_t canRx, gpio_num_t klineTx);
@@ -22,9 +26,14 @@ class OBD {
     
     String canTest(int canSpeed, int canHex, int parameter);
 
+    void canSnifferStart(int canSpeed);
+    void canSnifferStop();
+
     void canMonitorStart(int canSpeed, int canAddress, int canInterval, int parameters[], int parametersSize);
     void canMonitorStop();
-    String canMonitorData();
+
+    String canData();
+    bool canAvailable();
 
     void klineWrite();
 };

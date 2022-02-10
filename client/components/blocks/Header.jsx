@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 const navigation = [
   { name: "Home", href: "/" },
   { name: "Monitor", href: "/monitor" },
+  { name: "Sniffer", href: "/sniffer" },
   { name: "Parameters", href: "/parameters" },
   { name: "Settings", href: "/settings" },
 ];

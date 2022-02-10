@@ -37,7 +37,7 @@ const Monitor = () => {
   };
 
   const fetchData = async () => {
-    return await Api(`monitor/data`);
+    return await Api(`data`);
   };
 
   const parseData = (data) => {

@@ -5,6 +5,7 @@ import App from "./components/App";
 
 import Home from "./components/pages/Home";
 import Monitor from "./components/pages/Monitor";
+import Sniffer from "./components/pages/Sniffer";
 import Parameters from "./components/pages/Parameters";
 import Settings from "./components/pages/Settings";
 
@@ -16,6 +17,7 @@ render(
       <Route path="/" element={<App />}>
         <Route index element={<Home />} />
         <Route path="monitor" element={<Monitor />} />
+        <Route path="sniffer" element={<Sniffer />} />
         <Route path="parameters" element={<Parameters />} />
         <Route path="settings" element={<Settings />} />
       </Route>
