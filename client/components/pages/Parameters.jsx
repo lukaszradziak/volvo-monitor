@@ -188,9 +188,19 @@ const Parameters = () => {
           <div className="mt-1">
             <Select
               options={[
-                { label: "All", value: "" },
-                { label: "Active", value: "1" },
-                { label: "Inactive", value: "0" },
+                { label: `All`, value: "" },
+                {
+                  label: `Active (${
+                    parameters.filter((p) => p.active).length
+                  })`,
+                  value: "1",
+                },
+                {
+                  label: `Inactive (${
+                    parameters.filter((p) => !p.active).length
+                  })`,
+                  value: "0",
+                },
               ]}
               onChange={(e) => setSearchActive(e.target.value)}
             />

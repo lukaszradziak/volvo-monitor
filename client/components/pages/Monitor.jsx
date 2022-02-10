@@ -10,6 +10,7 @@ const Monitor = () => {
   const [parameters] = useParameters();
 
   const [data, setData] = useState("");
+  const [parameterValues, setParameterValues] = useState({});
 
   const [started, setStarted] = useState(false);
   const [blockInterval, setBlockInterval] = useState(false);
@@ -39,6 +40,24 @@ const Monitor = () => {
     return await Api(`monitor/data`);
   };
 
+  const parseData = (data) => {
+    const result = {};
+    data
+      .split("\n")
+      .filter((d) => d)
+      .forEach((line) => {
+        const col = line.split(`,`);
+        result[col[4] + col[5]] = [col[0], col[6], col[7], col[8]];
+      });
+
+    setParameterValues((old) => {
+      return {
+        ...old,
+        ...result,
+      };
+    });
+  };
+
   useInterval(
     async () => {
       setBlockInterval(true);
@@ -48,6 +67,7 @@ const Monitor = () => {
       }
 
       const data = await fetchData();
+      parseData(data);
       setData((old) => old + data);
 
       setBlockInterval(false);
@@ -83,6 +103,9 @@ const Monitor = () => {
         <span className="mr-2">Started: {started ? `yes` : `no`}</span>
         <span className="mr-2">Length: {data.split("\n").length}</span>
       </div>
+      <pre className="border p-2 my-2">
+        {JSON.stringify(parameterValues, " ", 2)}
+      </pre>
       <pre>{data}</pre>
     </>
   );

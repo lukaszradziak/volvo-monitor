@@ -99,7 +99,7 @@ String OBD::canTest(int canSpeed, int canHex, int parameter){
 void OBD::canMonitorStart(int canSpeed, int canAddress, int canInterval, int parameters[], int parametersSize){
   this->canOpen(canSpeed);
   this->canWrite(0x0FFFFE, 0xD8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-  delay(100UL);
+  delay(30UL);
 
   this->canMonitorActive = true;
   this->canMonitorAddress = canAddress;
@@ -109,7 +109,7 @@ void OBD::canMonitorStart(int canSpeed, int canAddress, int canInterval, int par
     Serial.println(parameters[i], HEX);
 
     this->canWrite(0x0FFFFE, 0xCD, canAddress, 0xA6, parameters[i] >> 8 & 0xFF, parameters[i] & 0xFF, canInterval, 0x00, 0x00);
-    delay(100UL);
+    delay(30UL);
   }
 }
 
