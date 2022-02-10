@@ -39,7 +39,7 @@ const Settings = () => {
           />
         )}
       />
-      <Label required>CAN Address</Label>
+      <Label required>CAN Address (CEM: 50, ECM: 7A)</Label>
       <Controller
         name="canAddress"
         control={control}
