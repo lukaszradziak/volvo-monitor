@@ -15,20 +15,35 @@ void OBD::begin(gpio_num_t canRx, gpio_num_t canTx, gpio_num_t klineTx) {
   Serial1.begin(10800, SERIAL_8N1, -1, this->klineTx, true);
 }
 
-void OBD::canOpen(String speed) {
+void OBD::canOpen(int speed) {
   this->canClose();
 
-  if(speed == "125"){
+  if(speed == 125){
     CAN_cfg.speed = CAN_SPEED_125KBPS;
-  } else if(speed == "250"){
+  } else if(speed == 250){
     CAN_cfg.speed = CAN_SPEED_250KBPS;
-  } else if(speed == "500"){
+  } else if(speed == 500){
     CAN_cfg.speed = CAN_SPEED_500KBPS;
   }
 
   CAN_cfg.tx_pin_id = this->canTx;
   CAN_cfg.rx_pin_id = this->canRx;
   CAN_cfg.rx_queue = xQueueCreate(10,sizeof(CAN_frame_t));
+
+  CAN_filter_t p_filter;
+  p_filter.FM = Single_Mode;
+
+  p_filter.ACR0 = 0x00;
+  p_filter.ACR1 = 0x00;
+  p_filter.ACR2 = 0x00;
+  p_filter.ACR3 = 0x00;
+
+  p_filter.AMR0 = 0x15;
+  p_filter.AMR1 = 0xFF;
+  p_filter.AMR2 = 0xFF;
+  p_filter.AMR3 = 0xFF;
+  ESP32Can.CANConfigFilter(&p_filter);
+
   ESP32Can.CANInit();
 }
 
@@ -51,7 +66,7 @@ void OBD::canWrite(uint32_t id, byte byte0, byte byte1, byte byte2, byte byte3, 
   ESP32Can.CANWriteFrame(&txFrame);
 }
 
-String OBD::canTest(String canSpeed, byte canHex, int parameter){
+String OBD::canTest(int canSpeed, int canHex, int parameter){
   String response = "";
 
   this->canOpen(canSpeed);
@@ -63,11 +78,11 @@ String OBD::canTest(String canSpeed, byte canHex, int parameter){
   for(int i = 0; i <= 500; i++){
     if(xQueueReceive(CAN_cfg.rx_queue, &rxFrame, 3*portTICK_PERIOD_MS) == pdTRUE){
       if(rxFrame.data.u8[1] == canHex && (rxFrame.data.u8[2] == 0xE6 || rxFrame.data.u8[2] == 0x7F)){
-        sprintf(rxString, "0x%.8lX", (rxFrame.MsgID & 0x1FFFFFFF), rxFrame.FIR.B.DLC);
+        sprintf(rxString, "%08X", (rxFrame.MsgID & 0x1FFFFFFF));
         response = response + rxString;
 
         for(int i = 0; i < 8; i++){
-          sprintf(rxString, ",0x%.2X", rxFrame.data.u8[i]);
+          sprintf(rxString, ",%02X", rxFrame.data.u8[i]);
           response = response + rxString;
         }
 
@@ -81,7 +96,7 @@ String OBD::canTest(String canSpeed, byte canHex, int parameter){
   return response;
 }
 
-void OBD::canMonitorStart(String canSpeed, byte canAddress, byte canInterval, int parameters[], int parametersSize){
+void OBD::canMonitorStart(int canSpeed, int canAddress, int canInterval, int parameters[], int parametersSize){
   this->canOpen(canSpeed);
   this->canWrite(0x0FFFFE, 0xD8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
   delay(100UL);
@@ -90,6 +105,9 @@ void OBD::canMonitorStart(String canSpeed, byte canAddress, byte canInterval, in
   this->canMonitorAddress = canAddress;
 
   for(int i = 0; i < parametersSize; i++){
+    Serial.print("hex: ");
+    Serial.println(parameters[i], HEX);
+
     this->canWrite(0x0FFFFE, 0xCD, canAddress, 0xA6, parameters[i] >> 8 & 0xFF, parameters[i] & 0xFF, canInterval, 0x00, 0x00);
     delay(100UL);
   }
@@ -110,7 +128,7 @@ String OBD::canMonitorData(){
         result += String(millis());
 
         for(int i = 0; i < 8; i++){
-          sprintf(rxString, ",0x%.2X", rxFrame.data.u8[i]);
+          sprintf(rxString, ",%02X", rxFrame.data.u8[i]);
           result += rxString;
         }
 

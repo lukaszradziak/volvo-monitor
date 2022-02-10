@@ -15,25 +15,24 @@ const Monitor = () => {
   const [blockInterval, setBlockInterval] = useState(false);
 
   const fetchStart = async () => {
-    const post = Object.fromEntries(
+    const values = Object.fromEntries(
       parameters
         .filter((parameter) => parameter.active)
         .map((parameter, index) => {
-          return [index, parameter.address];
+          return [`param${index}`, parseInt(parameter.address, 16)];
         })
     );
 
-    await Api(
-      `monitor/start?canSpeed=${settings.canSpeed}&canAddress=${settings.canAddress}&canInterval=${settings.canInterval}`,
-      post
-    );
+    await Api(`monitor/start`, {
+      canSpeed: settings.canSpeed,
+      canAddress: parseInt(settings.canAddress, 16),
+      canInterval: parseInt(settings.canInterval),
+      ...values,
+    });
   };
 
   const fetchStop = async () => {
-    await Api(
-      `monitor/stop?canSpeed=${settings.canSpeed}&canAddress=${settings.canAddress}&canInterval=${settings.canInterval}`,
-      {}
-    );
+    await Api(`monitor/stop`, {});
   };
 
   const fetchData = async () => {

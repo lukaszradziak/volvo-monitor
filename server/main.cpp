@@ -11,7 +11,7 @@
 #define OBD_CAN_TX GPIO_NUM_5
 #define OBD_KLINE_TX GPIO_NUM_12
 
-#define MAX_PARAMETERS 10
+#define MAX_PARAMETERS 20
 
 AsyncWebServer server(80);
 OBD obd;
@@ -45,20 +45,20 @@ void setup() {
   });
 
   server.on("/api/monitor/start", HTTP_POST, [](AsyncWebServerRequest *request){
-    String canSpeed = request->arg("canSpeed");
-    byte canAddress = strtoul(request->arg("canAddress").c_str(), NULL, 16);
-    byte canInterval = strtoul(request->arg("canInterval").c_str(), NULL, 16);
+    int canSpeed = request->arg("canSpeed").toInt();
+    int canAddress = request->arg("canAddress").toInt();
+    int canInterval = request->arg("canInterval").toInt();
 
-    printf("Monitor start: speed: %s, address: %02X, interval: %02X\n", canSpeed.c_str(), canAddress, canInterval);
+    printf("Monitor start: speed: %i, address: %02X, interval: %02X\n", canSpeed, canAddress, canInterval);
 
-    int parameters[20];
+    int parameters[MAX_PARAMETERS];
     int parametersSize = 0;
 
     int params = request->params();
     for(int i = 0; i < params; i++){
       AsyncWebParameter* p = request->getParam(i);
-      if(p->isPost()){
-        parameters[parametersSize] = strtoul(p->value().c_str(), NULL, 16);
+      if(p->isPost() && p->name().indexOf("param") != -1){
+        parameters[parametersSize] = p->value().toInt();
         parametersSize++;
       }
     }
@@ -77,11 +77,11 @@ void setup() {
   });
 
   server.on("/api/monitor/test", HTTP_POST, [](AsyncWebServerRequest *request){
-    String canSpeed = request->arg("canSpeed");
-    byte canAddress = strtoul(request->arg("canAddress").c_str(), NULL, 16);
-    int parameter = strtoul(request->arg("address").c_str(), NULL, 16);
+    int canSpeed = request->arg("canSpeed").toInt();
+    int canAddress = request->arg("canAddress").toInt();
+    int parameter = request->arg("address").toInt();
 
-    printf("Monitor test: speed: %s, address: %02X, parameter: %04X\n", canSpeed, canAddress, parameter);
+    printf("Monitor test: speed: %i, address: %02X, parameter: %04X\n", canSpeed, canAddress, parameter);
     String canResponse = obd.canTest(canSpeed, canAddress, parameter);
 
     request->send(200, "text/plain", canResponse);

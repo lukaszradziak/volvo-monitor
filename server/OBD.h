@@ -16,13 +16,13 @@ class OBD {
   public:
     void begin(gpio_num_t canTx, gpio_num_t canRx, gpio_num_t klineTx);
 
-    void canOpen(String speed);
+    void canOpen(int speed);
     void canClose();
     void canWrite(uint32_t id, byte byte0, byte byte1, byte byte2, byte byte3, byte byte4, byte byte5, byte byte6, byte byte7);
     
-    String canTest(String canSpeed, byte canHex, int parameter);
+    String canTest(int canSpeed, int canHex, int parameter);
 
-    void canMonitorStart(String canSpeed, byte canAddress, byte canInterval, int parameters[], int parametersSize);
+    void canMonitorStart(int canSpeed, int canAddress, int canInterval, int parameters[], int parametersSize);
     void canMonitorStop();
     String canMonitorData();
 

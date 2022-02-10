@@ -16,6 +16,7 @@ import Dropdown from "../elements/Dropdown";
 import ParameterSample from "../blocks/ParameterSample";
 import useSettings from "../../hooks/useSettings";
 import ParameterTest from "../blocks/ParameterTest";
+import { Api } from "../../utils/Api";
 
 const evaluateEval = (definition, variable) => {
   definition = definition.replaceAll("x&0b", "x & 0x");
@@ -109,20 +110,13 @@ const Parameters = () => {
   const test = async (data) => {
     setTestData({});
 
-    const body = new FormData();
-    body.append("canSpeed", settings.canSpeed);
-    body.append("canAddress", settings.canAddress);
-    body.append("address", data.address);
-
-    const request = await fetch(`http://192.168.4.1/api/monitor/test`, {
-      method: "POST",
-      body,
+    const text = await Api(`monitor/test`, {
+      canSpeed: settings.canSpeed,
+      canAddress: parseInt(settings.canAddress, 16),
+      address: parseInt(data.address, 16),
     });
-    const text = await request.text();
-    const result = text
-      .split(",")
-      .filter((d) => d)
-      .map((d) => d.replace("0x", ""));
+
+    const result = text.split(",").filter((d) => d);
 
     const parse = {
       hex: "",
