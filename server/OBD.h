@@ -26,7 +26,7 @@ class OBD {
     
     String canTest(int canSpeed, int canHex, int parameter);
 
-    void canSnifferStart(int canSpeed);
+    void canSnifferStart(int canSpeed, int filter[8]);
     void canSnifferStop();
 
     void canMonitorStart(int canSpeed, int canAddress, int canInterval, int parameters[], int parametersSize);

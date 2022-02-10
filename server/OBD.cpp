@@ -85,6 +85,9 @@ String OBD::canTest(int canSpeed, int canHex, int parameter){
 }
 
 void OBD::canMonitorStart(int canSpeed, int canAddress, int canInterval, int parameters[], int parametersSize){
+  this->canClose();
+  delay(30UL);
+
   this->canOpen(canSpeed);
   this->canWrite(0x0FFFFE, 0xD8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
   delay(30UL);
@@ -107,8 +110,26 @@ void OBD::canMonitorStop(){
   this->canMonitorData = -1;
 }
 
-void OBD::canSnifferStart(int canSpeed){
+void OBD::canSnifferStart(int canSpeed, int filter[8]){
+  this->canClose();
+  delay(30UL);
+
   this->canOpen(canSpeed);
+
+  CAN_filter_t p_filter;
+  p_filter.FM = Single_Mode;
+
+  p_filter.ACR0 = filter[0];
+  p_filter.ACR1 = filter[1];
+  p_filter.ACR2 = filter[2];
+  p_filter.ACR3 = filter[3];
+  p_filter.AMR0 = filter[4];
+  p_filter.AMR1 = filter[5];
+  p_filter.AMR2 = filter[6];
+  p_filter.AMR3 = filter[7];
+  ESP32Can.CANConfigFilter(&p_filter);
+  ESP32Can.CANInit();
+
   this->canSnifferActive = true;
 }
 

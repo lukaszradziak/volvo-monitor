@@ -47,7 +47,21 @@ void setup() {
   server.on("/api/sniffer/start", HTTP_POST, [](AsyncWebServerRequest *request){
     int canSpeed = request->arg("canSpeed").toInt();
     printf("Sniffer start: speed: %i\n", canSpeed);
-    obd.canSnifferStart(canSpeed);
+
+    int filters[8];
+    int filterIndex = 0;
+
+    int params = request->params();
+    for(int i = 0; i < params; i++){
+      AsyncWebParameter* p = request->getParam(i);
+      if(p->isPost() && p->name().indexOf("filter") != -1){
+        filters[filterIndex] = p->value().toInt();
+        printf("filter: %02X\n", filters[filterIndex]);
+        filterIndex++;
+      }
+    }
+
+    obd.canSnifferStart(canSpeed, filters);
 
     request->send(200, "text/plain", "ok");
   });
