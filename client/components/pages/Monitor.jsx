@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
 import { useInterval } from "react-use";
-import Button from "../elements/Button";
+
 import useParameters from "../../hooks/useParameters";
 import useSettings from "../../hooks/useSettings";
 import Api from "../../utils/Api";
+import DownloadFile from "../../utils/DownloadFile";
+import ParseFrame from "../../utils/ParseFrame";
+import Badge from "../elements/Badge";
+
+import Button from "../elements/Button";
+import Header from "../elements/Header";
 
 const Monitor = () => {
   const [settings] = useSettings();
   const [parameters] = useParameters();
 
-  const [data, setData] = useState("");
-  const [parameterValues, setParameterValues] = useState({});
+  const [data, setData] = useState([]);
+  const [actualData, setActualData] = useState([]);
 
   const [started, setStarted] = useState(false);
   const [blockInterval, setBlockInterval] = useState(false);
@@ -40,22 +46,39 @@ const Monitor = () => {
     return await Api(`data`);
   };
 
-  const parseData = (data) => {
-    const result = {};
-    data
-      .split("\n")
-      .filter((d) => d)
-      .forEach((line) => {
-        const col = line.split(`,`);
-        result[col[5] + col[6]] = [col[0], col[7], col[8], col[9]];
-      });
+  const activeParameters = () => {
+    return parameters.filter((paramter) => paramter.active);
+  };
 
-    setParameterValues((old) => {
-      return {
-        ...old,
-        ...result,
-      };
+  const parseFrames = (frames) => {
+    const parameters = activeParameters();
+    if (actualData.length !== parameters.length) {
+      parameters.forEach((parameter, index) => {
+        actualData[index] = 0;
+      });
+    }
+
+    frames.split(`\n`).forEach((line) => {
+      const frame = line.split(`,`);
+      const address = frame[5] + frame[6];
+      const time = frame[0];
+
+      const parameterIndex = parameters.findIndex(
+        (parameter) => parameter.address == address
+      );
+      const parameter = parameters[parameterIndex];
+
+      if (parameterIndex === -1) {
+        return;
+      }
+
+      const parse = ParseFrame(frame, parameter);
+      actualData[parameterIndex] = parse.calc;
+
+      data.push({ time, actual: [...actualData] });
     });
+    setActualData(actualData);
+    setData(data);
   };
 
   useInterval(
@@ -67,8 +90,7 @@ const Monitor = () => {
       }
 
       const data = await fetchData();
-      parseData(data);
-      setData((old) => old + data);
+      parseFrames(data);
 
       setBlockInterval(false);
     },
@@ -91,6 +113,21 @@ const Monitor = () => {
     await fetchStop();
   };
 
+  const clear = () => {
+    setData([]);
+    setActualData([]);
+  };
+
+  const download = () => {
+    const content = data
+      .map((line) => {
+        return `${line.time},${line.actual.join(`,`)}`;
+      })
+      .join(`\n`);
+
+    DownloadFile(content, `logger.csv`, `text/csv`);
+  };
+
   return (
     <>
       <div>
@@ -100,37 +137,43 @@ const Monitor = () => {
         <Button onClick={() => stop()} color={started ? `primary` : null}>
           Stop
         </Button>
-        <span className="mr-2">Started: {started ? `yes` : `no`}</span>
-        <span className="mr-2">Length: {data.split("\n").length}</span>
+        <Button onClick={() => clear()}>Clear</Button>
+        <Button onClick={() => download()}>Download</Button>
       </div>
-      {parameters
-        .filter((paramter) => paramter.active)
-        .map((paramter, index) => (
-          <div
-            key={index}
-            className="mb-6 bg-white shadow overflow-hidden sm:rounded-lg border p-2 flex justify-between"
-          >
-            <div>
+      <p className="mb-2">Length: {data.length}</p>
+      {activeParameters().map((paramter, index) => (
+        <div
+          key={index}
+          className="mb-2 bg-white shadow overflow-hidden sm:rounded-lg border p-2 flex justify-between items-center"
+        >
+          <div>
+            <Header>
               {paramter.name} ({paramter.address})
+            </Header>
+            <p>
+              {paramter.description.slice(0, 15)}{" "}
+              {paramter.description.length >= 15 ? `...` : null}
+            </p>
+          </div>
+          <div className="flex flex-col">
+            <div className="flex justify-end">
+              <Badge>
+                <span className="text-2xl">
+                  {parseFloat(actualData[index] || 0).toFixed(2)}
+                </span>
+              </Badge>
             </div>
-            <div>
-              {parameterValues[paramter.address]
-                ? parameterValues[paramter.address][0]
-                : null}
-            </div>
-            <div>
-              {parameterValues[paramter.address]
-                ? String(parameterValues[paramter.address][1]) +
-                  " " +
-                  String(parameterValues[paramter.address][2]) +
-                  " " +
-                  String(parameterValues[paramter.address][3])
-                : null}
+            <div className="flex justify-end">
+              <Badge type="success">
+                <span className="text-xs">0</span>
+              </Badge>{" "}
+              <Badge type="error">
+                <span className="text-xs">0</span>
+              </Badge>
             </div>
           </div>
-        ))}
-      <pre>{JSON.stringify(parameterValues, " ", 2)}</pre>
-      <pre>{data}</pre>
+        </div>
+      ))}
     </>
   );
 };

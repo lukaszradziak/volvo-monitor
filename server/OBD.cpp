@@ -66,7 +66,7 @@ String OBD::canTest(int canSpeed, int canHex, int parameter){
   for(int i = 0; i <= 500; i++){
     if(xQueueReceive(CAN_cfg.rx_queue, &rxFrame, 3*portTICK_PERIOD_MS) == pdTRUE){
       if(rxFrame.data.u8[1] == canHex && (rxFrame.data.u8[2] == 0xE6 || rxFrame.data.u8[2] == 0x7F)){
-        sprintf(rxString, "%08X", (rxFrame.MsgID & 0x1FFFFFFF));
+        sprintf(rxString, "0,%08X", (rxFrame.MsgID & 0x1FFFFFFF));
         response = response + rxString;
 
         for(int i = 0; i < 8; i++){

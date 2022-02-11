@@ -4,13 +4,13 @@ import Header from "../elements/Header";
 
 const ParameterTest = ({ data }) => {
   const badgeType = (index) => {
-    if (index === 0) {
+    if (index === 1) {
       return "error";
-    } else if (index === 1) {
+    } else if (index === 2) {
       return "info";
-    } else if (index === 4 || index === 5) {
+    } else if (index === 5 || index === 6) {
       return "info";
-    } else if (index === 6 || index === 7 || index === 8) {
+    } else if (index === 7 || index === 8 || index === 9) {
       return "success";
     } else {
       return "warning";

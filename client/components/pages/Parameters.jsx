@@ -17,11 +17,7 @@ import ParameterSample from "../blocks/ParameterSample";
 import useSettings from "../../hooks/useSettings";
 import ParameterTest from "../blocks/ParameterTest";
 import Api from "../../utils/Api";
-
-const evaluateEval = (definition, variable) => {
-  definition = definition.replaceAll("x&0b", "x & 0x");
-  return eval(`((x) => ${definition || "x"})(${variable})`);
-};
+import ParseFrame from "../../utils/ParseFrame";
 
 const Parameters = () => {
   const [settings] = useSettings();
@@ -116,34 +112,13 @@ const Parameters = () => {
       address: parseInt(data.address, 16),
     });
 
-    const result = text.split(",").filter((d) => d);
-
-    const parse = {
-      hex: "",
-      value: "",
-      calc: "",
-      success: false,
-    };
-
-    if (data.size) {
-      for (let i = 0; i < parseInt(data.size) / 8; i++) {
-        if (result[6 + i]) {
-          parse.hex += result[6 + i];
-        }
-      }
-    }
-
-    if (result[3] === "E6") {
-      parse.success = true;
-    }
-
-    parse.value = parseInt(parse.hex, 16);
-    parse.calc = evaluateEval(data.definition, parse.value);
+    const frame = text.split(",").filter((d) => d);
+    const parse = ParseFrame(frame, data);
 
     setOpenTest(true);
     setTestData({
       parameter: data,
-      data: result,
+      data: frame,
       parse,
     });
   };
