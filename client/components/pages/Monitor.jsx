@@ -103,9 +103,33 @@ const Monitor = () => {
         <span className="mr-2">Started: {started ? `yes` : `no`}</span>
         <span className="mr-2">Length: {data.split("\n").length}</span>
       </div>
-      <pre className="border p-2 my-2">
-        {JSON.stringify(parameterValues, " ", 2)}
-      </pre>
+      {parameters
+        .filter((paramter) => paramter.active)
+        .map((paramter, index) => (
+          <div
+            key={index}
+            className="mb-6 bg-white shadow overflow-hidden sm:rounded-lg border p-2 flex justify-between"
+          >
+            <div>
+              {paramter.name} ({paramter.address})
+            </div>
+            <div>
+              {parameterValues[paramter.address]
+                ? parameterValues[paramter.address][0]
+                : null}
+            </div>
+            <div>
+              {parameterValues[paramter.address]
+                ? String(parameterValues[paramter.address][1]) +
+                  " " +
+                  String(parameterValues[paramter.address][2]) +
+                  " " +
+                  String(parameterValues[paramter.address][3])
+                : null}
+            </div>
+          </div>
+        ))}
+      <pre>{JSON.stringify(parameterValues, " ", 2)}</pre>
       <pre>{data}</pre>
     </>
   );

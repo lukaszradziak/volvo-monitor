@@ -30,7 +30,7 @@ void OBD::canOpen(int speed) {
 
   CAN_cfg.tx_pin_id = this->canTx;
   CAN_cfg.rx_pin_id = this->canRx;
-  CAN_cfg.rx_queue = xQueueCreate(10,sizeof(CAN_frame_t));
+  CAN_cfg.rx_queue = xQueueCreate(50, sizeof(CAN_frame_t));
 
   ESP32Can.CANInit();
 }

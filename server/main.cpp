@@ -25,6 +25,15 @@ void task0(void* param){
   }
 }
 
+void task1(void* param){
+  while(true){
+    if(obd.canAvailable()){
+      monitorData += obd.canData();
+    } 
+    vTaskDelay(1UL);
+  }
+}
+
 void setup() {
   Serial.begin(115220);
   printf("Hello Volvo Monitor!\n");
@@ -126,10 +135,7 @@ void setup() {
   server.begin();
 
   xTaskCreatePinnedToCore(task0, "Task0", 4096, NULL, 1, NULL, 0);
+  xTaskCreatePinnedToCore(task1, "Task1", 4096, NULL, 1, NULL, 1);
 }
 
-void loop() {
-  if(obd.canAvailable()){
-    monitorData += obd.canData();
-  }
-}
+void loop() {}

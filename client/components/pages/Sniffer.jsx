@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 const Monitor = () => {
   const { control, watch, getValues } = useForm({
     defaultValues: {
-      limitFrames: 10,
+      limitFrames: 100,
       filterACR0: `0`,
       filterACR1: `0`,
       filterACR2: `0`,
@@ -214,7 +214,7 @@ const Monitor = () => {
         </Button>
       </div>
       <div>
-        <Header>Sniffer</Header>
+        <Header>Sniffer ({limitFrames.length})</Header>
         <div>
           {limitFrames.map((frame, index) => (
             <div key={index}>{JSON.stringify(frame)}</div>
