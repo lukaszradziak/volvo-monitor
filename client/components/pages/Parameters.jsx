@@ -16,7 +16,7 @@ import Dropdown from "../elements/Dropdown";
 import ParameterSample from "../blocks/ParameterSample";
 import useSettings from "../../hooks/useSettings";
 import ParameterTest from "../blocks/ParameterTest";
-import { Api } from "../../utils/Api";
+import Api from "../../utils/Api";
 
 const evaluateEval = (definition, variable) => {
   definition = definition.replaceAll("x&0b", "x & 0x");

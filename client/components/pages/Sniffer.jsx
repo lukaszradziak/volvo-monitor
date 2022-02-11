@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import { useInterval } from "react-use";
-import Button from "../elements/Button";
+import { Controller, useForm } from "react-hook-form";
+
 import useSettings from "../../hooks/useSettings";
-import { Api } from "../../utils/Api";
+import Api from "../../utils/Api";
+import DownloadFile from "../../utils/DownloadFile";
+
+import Button from "../elements/Button";
 import Header from "../elements/Header";
 import Label from "../elements/Label";
 import Input from "../elements/Input";
-import { Controller, useForm } from "react-hook-form";
 
 const Monitor = () => {
-  const { control, watch, getValues } = useForm({
+  const { control, getValues } = useForm({
     defaultValues: {
-      limitFrames: 100,
+      limitFrames: `0`,
       filterACR0: `0`,
       filterACR1: `0`,
       filterACR2: `0`,
@@ -28,7 +31,7 @@ const Monitor = () => {
   const [started, setStarted] = useState(false);
   const [blockInterval, setBlockInterval] = useState(false);
 
-  const [limitFrames, setLimitFrames] = useState([]);
+  const [data, setData] = useState([]);
 
   const fetchStart = async () => {
     await Api(`sniffer/start`, {
@@ -62,12 +65,9 @@ const Monitor = () => {
       });
   };
 
-  const softFilter = (data) => {
-    const softFilterId = getValues("softFilterId");
-    if (softFilterId) {
-      return parseInt(softFilterId, 16) === parseInt(data[1], 16);
-    }
-    return true;
+  const limitFrames = () => {
+    const limit = parseInt(getValues("limitFrames") || "0");
+    return isNaN(limit) ? 1 : limit;
   };
 
   useInterval(
@@ -76,11 +76,7 @@ const Monitor = () => {
 
       const data = await fetchData();
       const parse = parseFrames(data);
-
-      const maxFrames = parseInt(getValues("limitFrames")) || 1;
-      setLimitFrames((old) =>
-        [...old, ...parse].filter(softFilter).slice(-maxFrames)
-      );
+      setData((old) => [...old, ...parse]);
 
       setBlockInterval(false);
     },
@@ -93,15 +89,6 @@ const Monitor = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const subscription = watch(async (value, { name, type }) => {
-      setBlockInterval(true);
-      await start();
-      setBlockInterval(false);
-    });
-    return () => subscription.unsubscribe();
-  }, [watch]);
-
   const start = async () => {
     await fetchStart();
     setStarted(true);
@@ -110,6 +97,20 @@ const Monitor = () => {
   const stop = async () => {
     setStarted(false);
     await fetchStop();
+  };
+
+  const clear = () => {
+    setData([]);
+  };
+
+  const download = () => {
+    const content = data
+      .map((line) => {
+        return line.join(`,`);
+      })
+      .join(`\n`);
+
+    DownloadFile(content, `sniffer.csv`, `text/csv`);
   };
 
   return (
@@ -212,11 +213,13 @@ const Monitor = () => {
         <Button onClick={() => stop()} color={started ? `primary` : null}>
           Stop
         </Button>
+        <Button onClick={() => clear()}>Clear</Button>
+        <Button onClick={() => download()}>Download CSV</Button>
       </div>
       <div>
-        <Header>Sniffer ({limitFrames.length})</Header>
+        <Header>Sniffer ({data.length})</Header>
         <div>
-          {limitFrames.map((frame, index) => (
+          {data.slice(-limitFrames()).map((frame, index) => (
             <div key={index}>{JSON.stringify(frame)}</div>
           ))}
         </div>

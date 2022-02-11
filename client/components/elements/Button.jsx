@@ -12,6 +12,12 @@ const Button = (props) => {
       bgHover: `hover:bg-primary-700`,
       hover: `focus:ring-primary-500`,
     },
+    red: {
+      text: `text-white`,
+      bg: `bg-red-600`,
+      bgHover: `hover:bg-red-700`,
+      hover: `focus:ring-red-500`,
+    },
   };
   const color = colors[props.color] || colors.default;
 

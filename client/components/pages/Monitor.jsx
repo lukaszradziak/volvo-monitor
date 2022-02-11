@@ -3,7 +3,7 @@ import { useInterval } from "react-use";
 import Button from "../elements/Button";
 import useParameters from "../../hooks/useParameters";
 import useSettings from "../../hooks/useSettings";
-import { Api } from "../../utils/Api";
+import Api from "../../utils/Api";
 
 const Monitor = () => {
   const [settings] = useSettings();

@@ -4,7 +4,7 @@ const timeout = (time) => {
   return controller;
 };
 
-export const Api = async (path, post = null, config = { timeout: 5000 }) => {
+const Api = async (path, post = null, config = { timeout: 5000 }) => {
   let body;
 
   if (post) {
@@ -21,3 +21,5 @@ export const Api = async (path, post = null, config = { timeout: 5000 }) => {
 
   return text;
 };
+
+export default Api;
