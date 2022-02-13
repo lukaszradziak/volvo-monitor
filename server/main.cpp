@@ -21,6 +21,9 @@ String monitorData = "";
 void task0(void* param){
   while(true){
     obd.klineWrite();
+    if(obd.canAvailable()){
+      obd.canDiag();
+    }
     vTaskDelay(2000UL);
   }
 }

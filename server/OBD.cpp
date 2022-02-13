@@ -54,12 +54,16 @@ void OBD::canWrite(uint32_t id, byte byte0, byte byte1, byte byte2, byte byte3, 
   ESP32Can.CANWriteFrame(&txFrame);
 }
 
+void OBD::canDiag(){
+  this->canWrite(0x0FFFFE, 0xD8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
+  delay(30UL);
+}
+
 String OBD::canTest(int canSpeed, int canHex, int parameter){
   String response = "";
 
   this->canOpen(canSpeed);
-  this->canWrite(0x0FFFFE, 0xD8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-  delay(30UL);
+  this->canDiag();
 
   this->canWrite(0x0FFFFE, 0xCD, canHex, 0xA6, parameter >> 8 & 0xFF, parameter & 0xFF, 0x01, 0x00, 0x00);
 
@@ -89,8 +93,7 @@ void OBD::canMonitorStart(int canSpeed, int canAddress, int canInterval, int par
   delay(30UL);
 
   this->canOpen(canSpeed);
-  this->canWrite(0x0FFFFE, 0xD8, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00);
-  delay(30UL);
+  this->canDiag();
 
   this->canMonitorActive = true;
   this->canMonitorAddress = canAddress;

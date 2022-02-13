@@ -24,6 +24,8 @@ class OBD {
     void canClose();
     void canWrite(uint32_t id, byte byte0, byte byte1, byte byte2, byte byte3, byte byte4, byte byte5, byte byte6, byte byte7);
     
+    void canDiag();
+    
     String canTest(int canSpeed, int canHex, int parameter);
 
     void canSnifferStart(int canSpeed, int filter[8]);
