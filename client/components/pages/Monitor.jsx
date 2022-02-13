@@ -119,11 +119,18 @@ const Monitor = () => {
   };
 
   const download = () => {
-    const content = data
-      .map((line) => {
-        return `${line.time},${line.actual.join(`,`)}`;
-      })
-      .join(`\n`);
+    let header = `TIME,${activeParameters()
+      .map((p, index) => p.name || `p${index}`)
+      .join(`,`)}\n`;
+
+    const content =
+      header +
+      data
+        .map((line) => {
+          const time = (line.time - data[0].time) / 1000;
+          return `${time},${line.actual.join(`,`)}`;
+        })
+        .join(`\n`);
 
     DownloadFile(content, `logger.csv`, `text/csv`);
   };
