@@ -85,6 +85,32 @@ void setup() {
     request->send(200, "text/plain", "ok");
   });
 
+  server.on("/api/sniffer/message", HTTP_POST, [](AsyncWebServerRequest *request){
+    int address = request->arg("address").toInt();
+    printf("Sniffer messsage: address: %i\n", address);
+
+    int message[8];
+    int messageIndex = 0;
+
+    int params = request->params();
+    for(int i = 0; i < params; i++){
+      AsyncWebParameter* p = request->getParam(i);
+      if(p->isPost() && p->name().indexOf("data") != -1){
+        message[messageIndex] = p->value().toInt();
+        printf("message: %02X\n", message[messageIndex]);
+        messageIndex++;
+      }
+    }
+
+    obd.canDiag();
+    delay(30UL);
+
+    obd.canWrite(address, message[0], message[1], message[2], message[3], message[4], message[5], message[6], message[7]);
+    delay(30UL);
+
+    request->send(200, "text/plain", "ok");
+  });
+
   server.on("/api/monitor/start", HTTP_POST, [](AsyncWebServerRequest *request){
     int canSpeed = request->arg("canSpeed").toInt();
     int canAddress = request->arg("canAddress").toInt();

@@ -10,6 +10,7 @@ import Button from "../elements/Button";
 import Header from "../elements/Header";
 import Label from "../elements/Label";
 import Input from "../elements/Input";
+import SnifferMessage from "../blocks/SnifferMessage";
 
 const Monitor = () => {
   const { control, getValues } = useForm({
@@ -23,6 +24,7 @@ const Monitor = () => {
       filterAMR1: `ff`,
       filterAMR2: `ff`,
       filterAMR3: `ff`,
+      softFilterId: ``,
     },
   });
 
@@ -113,9 +115,29 @@ const Monitor = () => {
     DownloadFile(content, `sniffer.csv`, `text/csv`);
   };
 
+  const submitMessage = async (post) => {
+    if (!started) {
+      await start();
+    }
+
+    setStarted(false);
+
+    await Api(`sniffer/message`, post);
+
+    setStarted(true);
+  };
+
+  const dataFilter = (data) => {
+    if (getValues(`softFilterId`)) {
+      return data[1].search(getValues(`softFilterId`)) !== -1;
+    }
+    return true;
+  };
+
   return (
     <>
       <div>
+        <Header>Settings</Header>
         <Label>Hardware Filter</Label>
         <div className="grid grid-cols-4 md:grid-cols-8 gap-2 mt-2">
           <div>
@@ -207,6 +229,16 @@ const Monitor = () => {
             <Input {...{ onChange, onBlur, value }} />
           )}
         />
+        <Label>Soft Filter ID</Label>
+        <Controller
+          name="softFilterId"
+          control={control}
+          render={({ field: { onChange, onBlur, value } }) => (
+            <Input {...{ onChange, onBlur, value }} />
+          )}
+        />
+        <Header>Send Message</Header>
+        <SnifferMessage onSubmit={submitMessage} />
         <Button onClick={() => start()} color={started ? null : `primary`}>
           Start
         </Button>
@@ -219,9 +251,12 @@ const Monitor = () => {
       <div>
         <Header>Sniffer ({data.length})</Header>
         <div>
-          {data.slice(-limitFrames()).map((frame, index) => (
-            <div key={index}>{JSON.stringify(frame)}</div>
-          ))}
+          {data
+            .filter(dataFilter)
+            .slice(-limitFrames())
+            .map((frame, index) => (
+              <div key={index}>{JSON.stringify(frame)}</div>
+            ))}
         </div>
       </div>
     </>
