@@ -42,7 +42,7 @@ const SnifferMessage = ({ onSubmit = () => {} }) => {
           <Input {...{ onChange, onBlur, value }} />
         )}
       />
-      <div className="grid grid-cols-8 gap-2">
+      <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
         {dataIds.map((id) => (
           <div key={id}>
             <Label required>Data {id}</Label>
