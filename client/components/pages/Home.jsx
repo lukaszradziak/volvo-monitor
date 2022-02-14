@@ -20,7 +20,8 @@ const Home = () => {
   const [status, setStatus] = useState("");
 
   const read = async () => {
-    setStatus("Loading");
+    setStatus("Loading...");
+    setCodes([]);
     setModalOpen(true);
 
     const data = await Api(`dtc/read`, {
@@ -40,6 +41,7 @@ const Home = () => {
 
   const clear = async () => {
     setStatus("Loading...");
+    setCodes([]);
     setModalOpen(true);
 
     const data = await Api(`dtc/clear`, {

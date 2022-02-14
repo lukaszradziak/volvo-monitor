@@ -187,7 +187,7 @@ void OBD::canDtcClear(int canSpeed, int canAddress){
   this->canOpen(canSpeed);
 
   this->canDiag();
-  this->canWrite(0x0FFFFE, 0xCB, canAddress, 0xAE, 0x11, 0x00, 0x00, 0x00, 0x00);
+  this->canWrite(0x0FFFFE, 0xCB, canAddress, 0xAF, 0x11, 0x00, 0x00, 0x00, 0x00);
   delay(500UL);
 
   this->canClose();
