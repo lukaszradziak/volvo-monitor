@@ -34,6 +34,9 @@ class OBD {
     void canMonitorStart(int canSpeed, int canAddress, int canInterval, int parameters[], int parametersSize);
     void canMonitorStop();
 
+    String canDtcRead(int canSpeed, int canAddress);
+    void canDtcClear(int canSpeed, int canAddress);
+
     String canData();
     bool canAvailable();
 

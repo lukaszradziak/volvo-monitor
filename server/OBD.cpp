@@ -141,6 +141,58 @@ void OBD::canSnifferStop(){
   this->canClose();
 }
 
+String OBD::canDtcRead(int canSpeed, int canAddress){
+  String response = "";
+
+  this->canOpen(canSpeed);
+
+  this->canDiag();
+  this->canWrite(0x0FFFFE, 0xCB, canAddress, 0xAE, 0x1B, 0x00, 0x00, 0x00, 0x00);
+
+  uint32_t canId = 0;
+
+  for(int i = 0; i <= 1000; i++){
+    if(xQueueReceive(CAN_cfg.rx_queue, &rxFrame, 3*portTICK_PERIOD_MS) == pdTRUE){
+
+      if(rxFrame.data.u8[1] == canAddress || (canId != 0 && canId == rxFrame.MsgID)){
+        if(canId == 0){
+          canId = rxFrame.MsgID;
+        }
+
+        sprintf(rxString, "%ld,%08X", millis(), (rxFrame.MsgID & 0x1FFFFFFF));
+        response += rxString;
+
+        for(int i = 0; i < 8; i++){
+          sprintf(rxString, ",%02X", rxFrame.data.u8[i]);
+          response += rxString;
+        }
+
+        response += "\n";
+
+      }
+
+      if(rxFrame.data.u8[0] == 0x4E && canId != 0 && canId == rxFrame.MsgID){
+        break;
+      }
+    }
+  }
+
+  Serial.println(response);
+
+  this->canClose();
+  return response;
+}
+
+void OBD::canDtcClear(int canSpeed, int canAddress){
+  this->canOpen(canSpeed);
+
+  this->canDiag();
+  this->canWrite(0x0FFFFE, 0xCB, canAddress, 0xAE, 0x11, 0x00, 0x00, 0x00, 0x00);
+  delay(500UL);
+
+  this->canClose();
+}
+
 String OBD::canData(){
   String result = "";
 

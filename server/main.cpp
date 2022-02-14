@@ -103,8 +103,6 @@ void setup() {
     }
 
     obd.canDiag();
-    delay(30UL);
-
     obd.canWrite(address, message[0], message[1], message[2], message[3], message[4], message[5], message[6], message[7]);
     delay(30UL);
 
@@ -154,6 +152,27 @@ void setup() {
 
     request->send(200, "text/plain", canResponse);
   });
+
+  server.on("/api/dtc/read", HTTP_POST, [](AsyncWebServerRequest *request){
+    int canSpeed = request->arg("canSpeed").toInt();
+    int canAddress = request->arg("canAddress").toInt();
+
+    printf("DTC read: speed: %i, address: %02X\n", canSpeed, canAddress);
+    String data = obd.canDtcRead(canSpeed, canAddress);
+
+    request->send(200, "text/plain", data);
+  });
+
+  server.on("/api/dtc/clear", HTTP_POST, [](AsyncWebServerRequest *request){
+    int canSpeed = request->arg("canSpeed").toInt();
+    int canAddress = request->arg("canAddress").toInt();
+
+    printf("DTC clear: speed: %i, address: %02X\n", canSpeed, canAddress);
+    obd.canDtcClear(canSpeed, canAddress);
+
+    request->send(200, "text/plain", "ok");
+  });
+
 
   server
     .serveStatic("/", SPIFFS, "/")
